@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Random;
 public class Main {
     public static void main(String[] args) {
+        int seed = 0;
         // TODO: Seed your randomizer
-
+        Random rand = new Random(seed);
         // TODO: Get array size and thread count from user
 
         // TODO: Generate a random array of given size
@@ -110,13 +111,13 @@ class Interval {
         this.end = end;
     }
 
-    public int getStart = () -> this.start;
+    public int getStart () {return this.start;}
 
     public void setStart(int start) {
         this.start = start;
     }
 
-    public int getEnd = () -> this.end;
+    public int getEnd(){ return this.end;}
 
     public void setEnd(int end) {
         this.end = end;
@@ -134,5 +135,5 @@ class s_Interval extends Interval {
         this.ready = state;
     }
 
-    public boolean isReady = () -> this.ready;
+    public boolean isReady () {return this.ready;}
 }
