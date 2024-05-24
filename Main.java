@@ -10,19 +10,16 @@ public class Main {
         // TODO: Get array size and thread count from user'
         Scanner scanner = new Scanner(System.in);
         int[] arr = new int[scanner.nextInt()];
-        for(int i=0; i<arr.length; i++){
+        for (int i = 0; i < arr.length; i++) {
             arr[i] = rand.nextInt(arr.length);
-            System.out.println(arr[i]);
         }
-        System.out.println();
 
         // TODO: Generate a random array of given size
-        generate_intervals(0,arr.length-1).forEach((c)->merge(arr,c.getStart(),c.getEnd()));
+        if(scanner.nextInt() == 1)
+            generate_intervals(0,arr.length-1).forEach((c)->merge(arr,c.getStart(),c.getEnd()));
+        else return;
         // TODO: Call the generate_intervals method to generate the merge
         // sequence
-        for(int i: arr){
-            System.out.println(i);
-        }
         // TODO: Call merge on each interval in sequence
 
         // Once you get the single-threaded version to work, it's time to
