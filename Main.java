@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.CountDownLatch;
 public class Main {
     public static void main(String[] args) {
         int seed = 0;
@@ -136,7 +136,7 @@ class Interval {
 class t_Interval implements Runnable {
     private Interval interval;
     private t_Interval l_child, r_child, buddy_Interval;
-    Semaphore my_Sig;
+    CountDownLatch my_Sig;
     @Override
     public void run() {
         // TODO Auto-generated method stub
