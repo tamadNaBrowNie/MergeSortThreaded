@@ -14,7 +14,8 @@ public class Main {
             arr[i] = rand.nextInt(arr.length);
         }
 
-        // TODO: Generate a random array of given size
+        // TODO: Generate a random array of given 
+        // TODO: generate_intervals but threadedp
         if(scanner.nextInt() == 1)
             generate_intervals(0,arr.length-1).forEach((c)->merge(arr,c.getStart(),c.getEnd()));
         else return;
@@ -130,17 +131,13 @@ class Interval {
         this.end = end;
     }
 }
-
-class s_Interval extends Interval {
-    private boolean ready = false;
-
-    s_Interval(int start, int end) {
-        super(start, end);
+// Prefer composition over inheritance.
+class t_Interval implements Runnable {
+    private Interval interval;
+    private t_Interval l, r, buddy;
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'run'");
     }
-
-    public void setReady(boolean state) {
-        this.ready = state;
-    }
-
-    public boolean isReady () {return this.ready;}
 }
