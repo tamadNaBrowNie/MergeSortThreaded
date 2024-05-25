@@ -19,25 +19,21 @@ public class Main {
             System.out.println(arr[i]);
         }
         System.out.println();
-        // TODO: Generate a random array of given
-        // TODO: generate_intervals but threadedp
-        List<Interval> intervals = generate_intervals(0, arr.length - 1);
         ArrayList<Task> tasks = new ArrayList<Task>();
         int threads = scanner.nextInt();
         if (threads == 1)
-            intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
+            generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
         else {
-            new Task(intervals.get(intervals.size() - 1), intervals, tasks, arr);
+            new Task(new Interval(0, arr.length - 1), tasks, arr);
             try {
                 ExecutorService pool = Executors.newFixedThreadPool(threads);
-                do {
+                while (tasks.stream().anyMatch(task -> task.isDone() == false))
                     tasks.forEach(i -> pool.execute(i));
-                } while (tasks.stream().anyMatch(task -> task.isDone() == false));
                 pool.shutdown();
 
-                while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS)) {
-
-                }
+                while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
+                    // wait for pool to dry
+                    ;
             } catch (InterruptedException e) {
                 System.err.println("Exec interrupted");
             }
@@ -180,23 +176,16 @@ class Task implements Runnable {
             return;
         boolean left = (l_child == null) ? true : l_child.isDone(),
                 right = (r_child == null) ? true : r_child.isDone();
-        // System.out.printf("\n%d %d\n", this.interval.getStart(), this.interval.getEnd());
-        if (left && right) {
 
-            // System.out.printf("\n%d %d %d
-            // %d\n",this.r_child.interval.getStart(),this.r_child.interval.getEnd(),this.l_child.interval.getStart(),this.l_child.interval.getEnd());
+        if (left && right) {
             Main.merge(array, interval.getStart(), interval.getEnd());
             done = true;
-
         }
-        // for (int i : array)
-        //     System.out.println(i);
-        // System.out.println();
     }
     // TODO:RECURSIVE STATE CONSTRUCTOR THAT LOOKS FOR ITS CHILDREN. hell make it
     // create Tasks
 
-    Task(Interval i, List<Interval> list, List<Task> tasks, int[] arr) {
+    Task(Interval i, List<Task> tasks, int[] arr) {
         interval = i;
         this.array = arr;
         tasks.add(this);
@@ -204,19 +193,22 @@ class Task implements Runnable {
             r_child = l_child = null;
             return;
         }
-        Interval left = list.stream()
-                .filter(
-                        child -> child.getStart() == i.getStart()
-                                && child.getEnd() == (i.getStart() + i.getEnd()) >> 1)
-                .findFirst()
-                .orElse(null);
-        Interval right = list.stream()
-                .filter(child -> child.getEnd() == i.getEnd()
-                        && child.getStart() == ((i.getStart() + i.getEnd()) >> 1) + 1)
-                .findFirst()
-                .orElse(null);
-        l_child = new Task(left, list, tasks, arr);
-        r_child = new Task(right, list, tasks, arr);
+
+        Interval left = new Interval(i.getStart(), (i.getStart() + i.getEnd()) >> 1);
+        // list.stream()
+        // .filter(
+        // child -> child.getStart() == i.getStart()
+        // && child.getEnd() == (i.getStart() + i.getEnd()) >> 1)
+        // .findFirst()
+        // .orElse(null);
+        Interval right = new Interval(((interval.getStart() + interval.getEnd()) >> 1) + 1, interval.getEnd());
+        // list.stream()
+        // .filter(child -> child.getEnd() == i.getEnd()
+        // && child.getStart() == ((i.getStart() + i.getEnd()) >> 1) + 1)
+        // .findFirst()
+        // .orElse(null);
+        l_child = new Task(left, tasks, arr);
+        r_child = new Task(right, tasks, arr);
 
     }
 
