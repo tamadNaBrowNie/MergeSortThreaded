@@ -2,8 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.*;
 public class Main {
+    
     public static void main(String[] args) {
         int seed = 0;
         // TODO: Seed your randomizer
@@ -13,13 +14,24 @@ public class Main {
         int[] arr = new int[scanner.nextInt()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = rand.nextInt(arr.length);
+            System.out.println(arr[i]);
         }
-
+        System.out.println();
         // TODO: Generate a random array of given 
         // TODO: generate_intervals but threadedp
-        if(scanner.nextInt() == 1)
-            generate_intervals(0,arr.length-1).forEach((c)->merge(arr,c.getStart(),c.getEnd()));
-        else return;
+        List<Interval> intervals = generate_intervals(0, arr.length-1);
+        ArrayList<Task> tasks = new ArrayList<Task>();
+        int threads = scanner.nextInt() ;
+        if(threads== 1)
+            intervals.forEach((c)->merge(arr,c.getStart(),c.getEnd()));
+        else
+            
+            new Task(intervals.get(intervals.size()-1),intervals,tasks);
+        System.out.println();
+        for(int i:arr){
+            System.out.println(i);
+        }
+        scanner.close();
         // TODO: Call the generate_intervals method to generate the merge
         // sequence
         // TODO: Call merge on each interval in sequence
@@ -44,11 +56,11 @@ public class Main {
         frontier.add(new Interval(start, end));
 
         int i = 0;
-        while (i < frontier.size()) {
+        for (;i < frontier.size();i++) {
             int s = frontier.get(i).getStart();
             int e = frontier.get(i).getEnd();
 
-            i++;
+            // i++;
 
             // if base case
             if (s == e) {
@@ -132,14 +144,58 @@ class Interval {
         this.end = end;
     }
 }
+
 // Prefer composition over inheritance.
-class t_Interval implements Runnable {
+class Task implements Runnable{
     private Interval interval;
-    private t_Interval l_child, r_child, buddy_Interval;
-    CountDownLatch my_Sig;
-    @Override
-    public void run() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'run'");
+    private Task l_child, r_child;
+    private boolean done=false;
+    public void run(){
+
     }
+    Task(Interval interval,Task child1,Task child2,ArrayList<Task> tasks) {
+        this.interval = interval;
+        this.l_child = child1;
+        this.r_child = child2;
+        tasks.add(this);
+
+    }
+    // TODO:RECURSIVE STATE CONSTRUCTOR THAT LOOKS FOR ITS CHILDREN. hell make it create Tasks
+    Task(Interval i, List<Interval> list, List<Task> tasks ){
+        interval = i;
+        if(i.getStart() == i.getEnd())
+        {l_child = null;
+        r_child = null;}
+        else{
+            Interval left =list.stream()
+                            .filter(
+                                child->child.getStart() == i.getStart()
+                                 && child.getEnd() 
+                                 == (i.getStart()+i.getEnd())>>1)
+                                 .findFirst()
+                                 .orElse(null);
+            Interval right =list.stream()
+                            .filter(child->child.getEnd() == i.getEnd()
+                             && child.getStart() 
+                             == (
+                                (i.getStart()+i.getEnd())>>1)+1)
+                                .findFirst()
+                                .orElse(null);
+            l_child=new Task(left,list,tasks);
+            r_child=new Task(right,list,tasks);
+
+        }
+        tasks.add(this);
+
+    }
+// TODO: K.I.S.S. let the number of threads be on the thread pool executor.
+// class Task implements Runnable{
+    
+//     private State state;
+//     public void run(){
+
+//     }
+    
+// }
+    
 }
