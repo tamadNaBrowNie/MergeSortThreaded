@@ -31,7 +31,6 @@ public class Main {
                 // new Task(new Interval(0, arr.length - 1), tasks, arr);
                 tasks = generate_tasks(0, arr.length - 1, arr);
                 while (tasks.stream().anyMatch(task -> task.isDone() == false))
-                    // TODO: actually filter out unfinished tasks
                     tasks.forEach(i -> pool.execute(i));
                 pool.shutdown();
 
