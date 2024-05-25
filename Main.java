@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
-import java.util.Optional;
 
 public class Main {
 
@@ -20,7 +19,7 @@ public class Main {
             System.out.println(arr[i]);
         }
         System.out.println();
-        ArrayList<Task> tasks = new ArrayList<Task>();
+        List<Task> tasks = new ArrayList<Task>();
         int threads = scanner.nextInt();
         if (threads == 1)
             generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
@@ -29,8 +28,10 @@ public class Main {
             try {
 
                 ExecutorService pool = Executors.newFixedThreadPool(threads);
-                new Task(new Interval(0, arr.length - 1), tasks, arr);
+                // new Task(new Interval(0, arr.length - 1), tasks, arr);
+                tasks = generate_tasks(0, arr.length - 1, arr);
                 while (tasks.stream().anyMatch(task -> task.isDone() == false))
+                    // TODO: actually filter out unfinished tasks
                     tasks.forEach(i -> pool.execute(i));
                 pool.shutdown();
 
@@ -96,6 +97,37 @@ public class Main {
         }
 
         return retval;
+    }
+
+    public static List<Task> generate_tasks(int start, int end, int[] arr) {
+        List<Task> frontier = new ArrayList<>();
+        Task head = new Task(new Interval(start, end), arr);
+        frontier.add(head);
+
+        int i = 0;
+        while (i < frontier.size()) {
+            head = frontier.get(i);
+            int s = head.getStart();
+            int e = head.getEnd();
+
+            i++;
+
+            // if base case
+            if (s == e) {
+                continue;
+            }
+
+            // compute midpoint
+            int m = s + ((e - s) >> 1);
+            Task left = new Task(new Interval(s, m), arr),
+                    right = new Task(new Interval(m + 1, e), arr);
+            head.setChildren(left, right);
+            // add prerequisite intervals
+            frontier.add(left);
+            frontier.add(right);
+        }
+
+        return frontier;
     }
 
     /*
@@ -175,6 +207,14 @@ class Task implements Runnable {
         return done;
     }
 
+    public int getStart() {
+        return this.interval.getStart();
+    }
+
+    public int getEnd() {
+        return this.interval.getEnd();
+    }
+
     public void run() {
 
         boolean left = (l_child == null) ? true : l_child.isDone(),
@@ -186,7 +226,18 @@ class Task implements Runnable {
         done = true;
 
     }
+
+    public void setChildren(Task l, Task r) {
+        this.l_child = l;
+        this.r_child = r;
+    }
+
     // Prefer composition over inheritance
+    Task(Interval i, int[] arr) {
+        this.interval = i;
+        array = arr;
+        l_child = r_child = null;
+    }
 
     Task(Interval i, List<Task> tasks, int[] arr) {
         interval = i;
@@ -200,18 +251,23 @@ class Task implements Runnable {
         }
         int num = s + e;
         Interval left = new Interval(s, num >> 1);
-        // list.stream()
-        // .filter(
-        // child -> child.getStart() == i.getStart()
-        // && child.getEnd() == (i.getStart() + i.getEnd()) >> 1)
-        // .findFirst()
-        // .orElse(null);
+        // OLD code for searching intervals
+        /*
+         * list.stream()
+         * .filter(
+         * child -> child.getStart() == i.getStart()
+         * && child.getEnd() == (i.getStart() + i.getEnd()) >> 1)
+         * .findFirst()
+         * .orElse(null);
+         */
         Interval right = new Interval((num + 2) >> 1, e);
-        // list.stream()
-        // .filter(child -> child.getEnd() == i.getEnd()
-        // && child.getStart() == ((i.getStart() + i.getEnd()) >> 1) + 1)
-        // .findFirst()
-        // .orElse(null);
+        /*
+         * list.stream()
+         * .filter(child -> child.getEnd() == i.getEnd()
+         * && child.getStart() == ((i.getStart() + i.getEnd()) >> 1) + 1)
+         * .findFirst()
+         * .orElse(null);
+         */
         l_child = new Task(left, tasks, arr);
         r_child = new Task(right, tasks, arr);
 
