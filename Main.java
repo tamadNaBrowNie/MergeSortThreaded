@@ -16,6 +16,7 @@ public class Main {
         int[] arr = new int[scanner.nextInt()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = rand.nextInt(arr.length);
+            // TODO:BUFFER THIS
             System.out.println(arr[i]);
         }
         System.out.println();
@@ -24,9 +25,11 @@ public class Main {
         if (threads == 1)
             generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
         else {
-            new Task(new Interval(0, arr.length - 1), tasks, arr);
+
             try {
+
                 ExecutorService pool = Executors.newFixedThreadPool(threads);
+                new Task(new Interval(0, arr.length - 1), tasks, arr);
                 while (tasks.stream().anyMatch(task -> task.isDone() == false))
                     tasks.forEach(i -> pool.execute(i));
                 pool.shutdown();
@@ -62,16 +65,17 @@ public class Main {
      * 
      * Returns a list of Interval objects indicating the ranges for merge sort.
      */
+    // TODO: COPY PASTE THIS THEN MODIFY TO WORK WITH Task
     public static List<Interval> generate_intervals(int start, int end) {
         List<Interval> frontier = new ArrayList<>();
         frontier.add(new Interval(start, end));
 
         int i = 0;
-        for (; i < frontier.size(); i++) {
+        while (i < frontier.size()) {
             int s = frontier.get(i).getStart();
             int e = frontier.get(i).getEnd();
 
-            // i++;
+            i++;
 
             // if base case
             if (s == e) {
@@ -172,36 +176,37 @@ class Task implements Runnable {
     }
 
     public void run() {
-        if (done)
-            return;
+
         boolean left = (l_child == null) ? true : l_child.isDone(),
                 right = (r_child == null) ? true : r_child.isDone();
+        if (done || !left || !right)
+            return;
 
-        if (left && right) {
-            Main.merge(array, interval.getStart(), interval.getEnd());
-            done = true;
-        }
+        Main.merge(array, interval.getStart(), interval.getEnd());
+        done = true;
+
     }
-    // TODO:RECURSIVE STATE CONSTRUCTOR THAT LOOKS FOR ITS CHILDREN. hell make it
-    // create Tasks
+    // Prefer composition over inheritance
 
     Task(Interval i, List<Task> tasks, int[] arr) {
         interval = i;
         this.array = arr;
         tasks.add(this);
-        if (i.getStart() == i.getEnd()) {
+        int s = i.getStart(),
+                e = i.getEnd();
+        if (s == e) {
             r_child = l_child = null;
             return;
         }
-
-        Interval left = new Interval(i.getStart(), (i.getStart() + i.getEnd()) >> 1);
+        int num = s + e;
+        Interval left = new Interval(s, num >> 1);
         // list.stream()
         // .filter(
         // child -> child.getStart() == i.getStart()
         // && child.getEnd() == (i.getStart() + i.getEnd()) >> 1)
         // .findFirst()
         // .orElse(null);
-        Interval right = new Interval(((interval.getStart() + interval.getEnd()) >> 1) + 1, interval.getEnd());
+        Interval right = new Interval((num + 2) >> 1, e);
         // list.stream()
         // .filter(child -> child.getEnd() == i.getEnd()
         // && child.getStart() == ((i.getStart() + i.getEnd()) >> 1) + 1)
