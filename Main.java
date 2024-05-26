@@ -25,13 +25,13 @@ public class Main {
         } else {
             scanner.close();
 
-            for (int h = 0; h < 5; h++) {
+            for (int h = 1; h < 6; h++) {
                 System.out.println();
                 for (int i = 0; i < data.length; i++) {
                     System.out.println("\n n= " + data[i]);
                     for (int j = 0; j < cores.length; j++) {
                         System.out.println("threads= " + cores[j]);
-                        for (int k = 0; k < 3; k++) {
+                        for (int k = 1; k < 4; k++) {
                             System.out.println("Test " + k);
                             doTasks(data[i], cores[j]);
                         }
