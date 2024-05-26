@@ -20,9 +20,12 @@ public class Main {
             doTasks(scanner.nextInt(), scanner.nextInt());
         } else {
             for (int i = 0; i < data.length; i++) {
+                System.out.println("\n n= " + data[i]);
                 for (int j = 0; j < cores.length; j++) {
+                    System.out.println("threads= " + cores[j]);
                     for (int k = 0; k < 4; k++) {
-                        doTasks(i, j);
+                        System.out.println("Test " + k);
+                        doTasks(data[i], cores[j]);
                     }
                 }
             }
