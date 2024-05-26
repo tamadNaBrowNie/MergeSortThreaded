@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         // TODO: Seed your randomizer
-
+        Random rand = new Random(0);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
                 data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
@@ -18,7 +18,7 @@ public class Main {
         System.out.print("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
-            doTasks(scanner.nextInt(), scanner.nextInt());
+            doTasks(scanner.nextInt(), scanner.nextInt(), rand);
 
             scanner.close();
         } else {
@@ -26,13 +26,13 @@ public class Main {
 
             for (int h = 1; h < 6; h++) {
                 System.out.println(h);
-                for (int i = 0; i < data.length; i++) {
-                    System.out.print("n= " + data[i]);
-                    for (int j = 0; j < cores.length; j++) {
-                        System.out.println(" threads= " + cores[j]);
+                for (int dat : data) {
+                    System.out.print("n= " + dat);
+                    for (int core : cores) {
+                        System.out.println(" threads= " + core);
                         for (int k = 1; k < 4; k++) {
                             System.out.println("Test " + k);
-                            doTasks(data[i], cores[j]);
+                            doTasks(dat, core, rand);
                         }
 
                     }
@@ -61,16 +61,13 @@ public class Main {
         return true;
     }
 
-    private static void doTasks(int n, int p) {
-        int seed = 0;
+    private static void doTasks(int n, int p, Random rand) {
 
-        Random rand = new Random(seed);
-
+        if (n < 1)
+            return;
         int[] arr = new int[n];
         // System.out.println("Array done");
-        if (arr.length < 1) {
-            return;
-        }
+
         for (int i = 0; i < arr.length; i++)
             arr[i] = i + 1;
         for (int i = arr.length - 1; i > 0; i--) {
