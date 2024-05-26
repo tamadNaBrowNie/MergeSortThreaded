@@ -18,7 +18,10 @@ public class Main {
             System.out.print("\nEnter array size N and");
             System.out.print("# of threads (its an exponent raising 2): ");
             doTasks(scanner.nextInt(), scanner.nextInt());
+
+            scanner.close();
         } else {
+            scanner.close();
             for (int h = 0; h < 5; h++) {
                 for (int i = 0; i < data.length; i++) {
                     System.out.println("\n n= " + data[i]);
@@ -35,7 +38,6 @@ public class Main {
             }
         }
 
-        scanner.close();
         // TODO: Call the generate_intervals method to generate the merge
         // sequence
         // TODO: Call merge on each interval in sequence
