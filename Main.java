@@ -12,7 +12,7 @@ public class Main {
         // TODO: Seed your randomizer
 
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4 }, data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 13) - 1, 1 << 23 };
+        int[] cores = { 0, 1, 2, 3, 4 }, data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
         System.out.println("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
@@ -23,6 +23,7 @@ public class Main {
             scanner.close();
         } else {
             scanner.close();
+
             for (int h = 0; h < 5; h++) {
                 System.out.println();
                 for (int i = 0; i < data.length; i++) {
@@ -66,7 +67,7 @@ public class Main {
         Random rand = new Random(seed);
 
         int[] arr = new int[n];
-
+        // System.out.println("Array done");
         if (arr.length < 1) {
             return;
         }
@@ -81,7 +82,7 @@ public class Main {
             arr[i] = a;
         }
         int threads = 1 << p;
-
+        // System.out.println("Array shuffed");
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
         List<Task> tasks = new ArrayList<Task>();
         switch (threads) {
@@ -91,7 +92,9 @@ public class Main {
             case 0:
                 return;
             default:
-                intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
+                // System.out.println("Mapping tasks");
+                intervals.forEach(c -> tasks.add(new Task(c, arr)));
+
         }
 
         if ((arr.length & -arr.length) == arr.length) {
@@ -112,11 +115,15 @@ public class Main {
             find_kids(tasks);
 
         try {
+            // Slow? yes. Stupid? its not stupid if it works.
+            // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
 
-            while (tasks.stream().anyMatch(task -> task.isDone() == false))
+            while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
+                System.out.println("IN");
                 tasks.forEach(i -> pool.execute(i));
+            }
             pool.shutdown();
 
             // wait for pool to dry
@@ -161,17 +168,7 @@ public class Main {
                     // .findFirst()
                     // .orElse(null),
                     r_child = task_map.get(key(m + 1, task.getEnd()));
-            // tasks.stream()
-            // .filter(
-            // t -> t.getStart() == m + 1
-            // &&
-            // t.getEnd() == task.getEnd())
-            // .findFirst()
-            // .orElse(null);
-            // System.out.println();
-            // System.out.println(tasks.indexOf(r_child));
-            // System.out.println(tasks.indexOf(l_child));
-            // System.out.println();
+
             task.setChildren(r_child, l_child);
 
         }
