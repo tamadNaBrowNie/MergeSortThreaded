@@ -112,8 +112,14 @@ public class Main {
                     right += 2;
                 }
 
-            } else
-                find_kids(tasks, pool);
+            } else {
+                HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+
+                for (Task t : tasks) {
+                    task_map.put(key(t.getStart(), t.getEnd()), t);
+                }
+                tasks.forEach((task) -> callables.add(new MapFinder(task, task_map)));
+            }
             pool.invokeAll(callables);
             // irresponsibly calling invokeall
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
@@ -136,18 +142,6 @@ public class Main {
     public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
         return start < end ? start + end * end : start * start + start + end;
-    }
-
-    private static void find_kids(List<Task> tasks, ExecutorService pool)
-            throws InterruptedException {
-
-        HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
-        // tasks.forEach(task -> System.out.println(task));
-        for (Task t : tasks) {
-            task_map.put(key(t.getStart(), t.getEnd()), t);
-        }
-        pool.invokeAll(tasks.stream().map((task) -> new MapFinder(task, task_map)).toList());
-
     }
 
     /*
@@ -291,7 +285,7 @@ class MapFinder implements Callable<Task> {
         this.tasks = tasks;
     }
 
-    public Task call() throws Exception {
+    public Task call() {
         // TODO Auto-generated method
         if (t.isBase())
             return t;
@@ -299,8 +293,8 @@ class MapFinder implements Callable<Task> {
         // THANK FUCK FOR HASHMAPS
         Task l_child = tasks.get(Main.key(t.getStart(), m)),
                 r_child = tasks.get(Main.key(m + 1, t.getEnd()));
-        System.out.println(t);
-        System.out.println(l_child + " " + r_child);
+
+        // System.out.println(t + " " + l_child + " " + r_child);
         t.setChildren(r_child, l_child);
         return t;
     }
