@@ -133,6 +133,7 @@ public class Main {
             }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
             // STUPID AHCK
+            // TODO: Parallelize dependency searc
             Task l_child = tasks.stream()
                     .filter(
                             t -> t.getStart() == task.getStart()
