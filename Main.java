@@ -12,7 +12,8 @@ public class Main {
         // TODO: Seed your randomizer
 
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4 }, data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
+        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
         System.out.println("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
