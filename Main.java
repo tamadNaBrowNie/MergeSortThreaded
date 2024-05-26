@@ -8,17 +8,57 @@ import java.util.concurrent.*;
 public class Main {
 
     public static void main(String[] args) {
-        int seed = 0;
         // TODO: Seed your randomizer
-        Random rand = new Random(seed);
+
         // TODO: Get array size and thread count from user'
-        System.out.print("\nEnter array size N: ");
+        int[] cores = {}, data = {};
         Scanner scanner = new Scanner(System.in);
-        int[] arr = new int[scanner.nextInt()];
+        System.out.println("Test mode? 0 is no else yes");
+        if (0 == scanner.nextInt()) {
+            System.out.print("\nEnter array size N: ");
+            System.out.print("# of threads (its an exponent raising 2): ");
+            doTasks(scanner.nextInt(), scanner.nextInt());
+        } else {
+            for (int i = 0; i < data.length; i++) {
+                for (int j = 0; j < cores.length; j++) {
+                    for (int k = 0; k < 4; k++) {
+                        doTasks(i, j);
+                    }
+                }
+            }
+
+        }
+
+        scanner.close();
+        // TODO: Call the generate_intervals method to generate the merge
+        // sequence
+        // TODO: Call merge on each interval in sequence
+
+        // Once you get the single-threaded version to work, it's time to
+        // implement the concurrent version. Good luck :)
+
+    }
+
+    private static boolean isSorted(int[] arr) {
+        for (int i : arr) {
+            System.out.println(i);
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i + 1])
+                return false;
+        }
+        return true;
+    }
+
+    private static void doTasks(int n, int p) {
+        int seed = 0;
+
+        Random rand = new Random(seed);
+
+        int[] arr = new int[n];
         System.out.println("Shuffled array:");
         if (arr.length < 1) {
             System.out.println("BYE");
-            scanner.close();
             return;
         }
         for (int i = 0; i < arr.length; i++)
@@ -31,15 +71,14 @@ public class Main {
             arr[index] = arr[i];
             arr[i] = a;
         }
-        System.out.print("# of threads: ");
-        int threads = scanner.nextInt();
-        scanner.close();
+        int threads = 1 << p;
+
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
         List<Task> tasks = new ArrayList<Task>();
         switch (threads) {
             case 1:
                 intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-
+                System.out.println("\narray sorted? " + isSorted(arr));
             case 0:
                 System.out.println("Bye");
                 return;
@@ -70,13 +109,7 @@ public class Main {
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
-
-        // TODO: Call the generate_intervals method to generate the merge
-        // sequence
-        // TODO: Call merge on each interval in sequence
-
-        // Once you get the single-threaded version to work, it's time to
-        // implement the concurrent version. Good luck :)
+        System.out.println("\narray sorted? " + isSorted(arr));
 
     }
 
@@ -88,7 +121,7 @@ public class Main {
             System.out.println(i);
             System.out.println(tasks.get(i).toString());
             if (task.isBase()) {
-                System.out.println("Based");
+                System.out.println("Based\n");
                 continue;
             }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
@@ -107,7 +140,9 @@ public class Main {
                                             t.getEnd() == task.getEnd())
                             .findFirst()
                             .orElse(null);
-
+            System.out.println(tasks.indexOf(r_child));
+            System.out.println(tasks.indexOf(l_child));
+            System.out.println();
             task.setChildren(r_child, l_child);
 
         }
