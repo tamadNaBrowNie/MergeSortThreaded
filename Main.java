@@ -6,12 +6,6 @@ import java.util.Scanner;
 import java.util.concurrent.*;
 
 public class Main {
-    public static void print_arr(int[] arr) {
-        System.out.println();
-        for (int i : arr) {
-            System.out.println(i);
-        }
-    }
 
     public static void main(String[] args) {
         int seed = 0;
@@ -22,67 +16,49 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int[] arr = new int[scanner.nextInt()];
         System.out.println("Shuffled array:");
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = rand.nextInt(arr.length);
-            // TODO:BUFFER THIS
-            // System.out.println(arr[i]);
+        if (arr.length < 1) {
+            System.out.println("BYE");
+            scanner.close();
+            return;
+        }
+        for (int i = 0; i < arr.length; i++)
+            arr[i] = i + 1;
+        for (int i = arr.length - 1; i > 0; i--) {
+            // from https://stackoverflow.com/a/1520212
+            int index = rand.nextInt(i + 1);
+            // Simple swap
+            int a = arr[index];
+            arr[index] = arr[i];
+            arr[i] = a;
         }
         System.out.print("# of threads: ");
         int threads = scanner.nextInt();
         scanner.close();
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
+        List<Task> tasks = new ArrayList<Task>();
         switch (threads) {
             case 1:
                 intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-                print_arr(arr);
+
             case 0:
+                System.out.println("Bye");
                 return;
             default:
+                intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
         }
-
-        List<Task> tasks = new ArrayList<Task>();
-        intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
-        Collections.reverse(tasks);
 
         tasks.forEach(t -> System.out.println(t.toString()));
         System.out.println();
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            System.out.println(i);
-            System.out.println(tasks.get(i).toString());
-            if (task.isBase()) {
-                System.out.println("Based");
-                continue;
-            }
-            int left = i * 2 + 1, right = i * 2 + 2;
-            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-            // STUPID AHCK
-            Task l_child = (tasks.size() > left) ? tasks.get(left)
-                    : tasks.stream()
-                            .filter(
-                                    t -> t.getStart() == task.getStart()
-                                            &&
-                                            t.getEnd() == m)
-                            .findFirst()
-                            .orElse(null),
-                    r_child = (tasks.size() > right) ? tasks.get(right)
-                            : tasks.stream()
-                                    .filter(
-                                            t -> t.getStart() == m + 1
-                                                    &&
-                                                    t.getEnd() == task.getEnd())
-                                    .findFirst()
-                                    .orElse(null);
+        if ((arr.length & -arr.length) == arr.length) {
+            Collections.reverse(tasks);
+            makeTree(tasks);
+        } else
+            find_kids(tasks);
 
-            task.setChildren(r_child, l_child);
-
-        }
         try {
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
 
-            // new Task(new Interval(0, arr.length - 1), tasks, arr);
-            // tasks = generate_tasks(0, arr.length - 1, arr);
             while (tasks.stream().anyMatch(task -> task.isDone() == false))
                 tasks.forEach(i -> pool.execute(i));
             pool.shutdown();
@@ -104,6 +80,50 @@ public class Main {
 
     }
 
+    private static void find_kids(List<Task> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+
+            System.out.println();
+            Task task = tasks.get(i);
+            System.out.println(i);
+            System.out.println(tasks.get(i).toString());
+            if (task.isBase()) {
+                System.out.println("Based");
+                continue;
+            }
+            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
+            // STUPID AHCK
+            Task l_child = tasks.stream()
+                    .filter(
+                            t -> t.getStart() == task.getStart()
+                                    &&
+                                    t.getEnd() == m)
+                    .findFirst()
+                    .orElse(null),
+                    r_child = tasks.stream()
+                            .filter(
+                                    t -> t.getStart() == m + 1
+                                            &&
+                                            t.getEnd() == task.getEnd())
+                            .findFirst()
+                            .orElse(null);
+
+            task.setChildren(r_child, l_child);
+
+        }
+    }
+
+    private static void makeTree(List<Task> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).isBase())
+                continue;
+            int left = i * 2 + 1, right = i * 2 + 2;
+            Task l_child = tasks.get(left),
+                    r_child = tasks.get(right);
+            tasks.get(i).setChildren(r_child, l_child);
+        }
+    }
+
     /*
      * This function generates all the intervals for merge sort iteratively, given
      * the range of indices to sort. Algorithm runs in O(n).
@@ -114,7 +134,6 @@ public class Main {
      * 
      * Returns a list of Interval objects indicating the ranges for merge sort.
      */
-    // TODO: COPY PASTE THIS THEN MODIFY TO WORK WITH Task
     public static List<Interval> generate_intervals(int start, int end) {
         List<Interval> frontier = new ArrayList<>();
         frontier.add(new Interval(start, end));
