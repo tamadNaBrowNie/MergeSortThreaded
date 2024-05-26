@@ -100,13 +100,14 @@ public class Main {
         if ((arr.length & -arr.length) == arr.length) {
             Collections.reverse(tasks);
             int left = 1, right = 2;
+            Task l_child, r_child;
             for (Task t : tasks) {
 
                 if (t.isBase())
                     continue;
 
-                Task l_child = tasks.get(left),
-                        r_child = tasks.get(right);
+                l_child = tasks.get(left);
+                r_child = tasks.get(right);
                 t.setChildren(r_child, l_child);
                 left += 2;
                 right += 2;
