@@ -138,7 +138,7 @@ public class Main {
             pool.invokeAll(callables);
             // irresponsibly calling invokeall
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
-                System.out.println("IN");
+                // System.out.println("IN");
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
 
