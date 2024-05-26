@@ -6,13 +6,19 @@ import java.util.Scanner;
 import java.util.concurrent.*;
 
 public class Main {
+    public static void print_arr(int[] arr) {
+        System.out.println();
+        for (int i : arr) {
+            System.out.println(i);
+        }
+    }
 
     public static void main(String[] args) {
         int seed = 0;
         // TODO: Seed your randomizer
         Random rand = new Random(seed);
         // TODO: Get array size and thread count from user'
-        System.out.print("Enter array size N: ");
+        System.out.print("\nEnter array size N: ");
         Scanner scanner = new Scanner(System.in);
         int[] arr = new int[scanner.nextInt()];
         System.out.println("Shuffled array:");
@@ -21,67 +27,72 @@ public class Main {
             // TODO:BUFFER THIS
             // System.out.println(arr[i]);
         }
-
-        System.out.println();
-        System.out.println();
-
+        System.out.print("# of threads: ");
         int threads = scanner.nextInt();
         scanner.close();
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
-        // intervals.forEach((c) -> System.out.printf("\n%d %d\n", c.getStart(),
-        // c.getEnd()));
-        if (threads == 1)
-            intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-        else {
-            List<Task> tasks = new ArrayList<Task>();
-            intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
-            Collections.reverse(tasks);
-            // The commented code snippet you provided is a loop that iterates over the list
-            // of tasks
-            // and sets the children for each task. Here's a breakdown of what each part of
-            // the code is
-            // doing:
-            tasks.forEach(t -> System.out.println(t.toString()));
-            System.out.println();
-            for (int i = 0; i < tasks.size(); i++) {
-                Task task = tasks.get(i);
-                System.out.println(i);
-                System.out.println(tasks.get(i).toString());
-                if (task.isBase())
-                    continue;
-                int left = i * 2 + 1, right = i * 2 + 2;
-                // if (left < tasks.size() && right < tasks.size())
-                if (tasks.size() > left || tasks.size() > right)
-                    task.setChildren(tasks.get(left), tasks.get(right));
-                // else
-                // tasks.get(i).setChildren(tasks.get(i + 1), tasks.get(i + 2));
-                try {
-                    System.out.println(tasks.get(i).getL().toString());
-                    System.out.println(tasks.get(i).getR().toString());
-                } catch (Exception e) {
-                    // TODO: handle exception
-                }
-            }
-            try {
-
-                ExecutorService pool = Executors.newFixedThreadPool(threads);
-
-                // new Task(new Interval(0, arr.length - 1), tasks, arr);
-                // tasks = generate_tasks(0, arr.length - 1, arr);
-                while (tasks.stream().anyMatch(task -> task.isDone() == false))
-                    tasks.forEach(i -> pool.execute(i));
-                pool.shutdown();
-
-                while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
-                    // wait for pool to dry
-                    ;
-            } catch (InterruptedException e) {
-                System.err.println("Exec interrupted");
-            }
+        switch (threads) {
+            case 1:
+                intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
+                print_arr(arr);
+            case 0:
+                return;
+            default:
         }
+
+        List<Task> tasks = new ArrayList<Task>();
+        intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
+        Collections.reverse(tasks);
+
+        tasks.forEach(t -> System.out.println(t.toString()));
         System.out.println();
-        for (int i : arr) {
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
             System.out.println(i);
+            System.out.println(tasks.get(i).toString());
+            if (task.isBase()) {
+                System.out.println("Based");
+                continue;
+            }
+            int left = i * 2 + 1, right = i * 2 + 2;
+            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
+            // STUPID AHCK
+            Task l_child = (tasks.size() > left) ? tasks.get(left)
+                    : tasks.stream()
+                            .filter(
+                                    t -> t.getStart() == task.getStart()
+                                            &&
+                                            t.getEnd() == m)
+                            .findFirst()
+                            .orElse(null),
+                    r_child = (tasks.size() > right) ? tasks.get(right)
+                            : tasks.stream()
+                                    .filter(
+                                            t -> t.getStart() == m + 1
+                                                    &&
+                                                    t.getEnd() == task.getEnd())
+                                    .findFirst()
+                                    .orElse(null);
+
+            task.setChildren(r_child, l_child);
+
+        }
+        try {
+
+            ExecutorService pool = Executors.newFixedThreadPool(threads);
+
+            // new Task(new Interval(0, arr.length - 1), tasks, arr);
+            // tasks = generate_tasks(0, arr.length - 1, arr);
+            while (tasks.stream().anyMatch(task -> task.isDone() == false))
+                tasks.forEach(i -> pool.execute(i));
+            pool.shutdown();
+
+            // wait for pool to dry
+            while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
+                ;
+
+        } catch (InterruptedException e) {
+            System.err.println("Exec interrupted");
         }
 
         // TODO: Call the generate_intervals method to generate the merge
