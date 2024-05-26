@@ -64,9 +64,8 @@ public class Main {
         Random rand = new Random(seed);
 
         int[] arr = new int[n];
-        System.out.println("Shuffled array:");
+
         if (arr.length < 1) {
-            System.out.println("BYE");
             return;
         }
         for (int i = 0; i < arr.length; i++)
@@ -88,7 +87,6 @@ public class Main {
                 intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
                 System.out.println("\narray sorted? " + isSorted(arr));
             case 0:
-                System.out.println("Bye");
                 return;
             default:
                 intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
