@@ -27,9 +27,9 @@ public class Main {
             for (int h = 1; h < 6; h++) {
                 System.out.println(h);
                 for (int i = 0; i < data.length; i++) {
-                    System.out.println("n= " + data[i]);
+                    System.out.print("n= " + data[i]);
                     for (int j = 0; j < cores.length; j++) {
-                        System.out.println("threads= " + cores[j]);
+                        System.out.println(" threads= " + cores[j]);
                         for (int k = 1; k < 4; k++) {
                             System.out.println("Test " + k);
                             doTasks(data[i], cores[j]);
