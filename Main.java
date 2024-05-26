@@ -91,8 +91,8 @@ public class Main {
                 intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
         }
 
-        tasks.forEach(t -> System.out.println(t.toString()));
-        System.out.println();
+        // tasks.forEach(t -> System.out.println(t.toString()));
+        // System.out.println();
         if ((arr.length & -arr.length) == arr.length) {
             Collections.reverse(tasks);
             makeTree(tasks);
@@ -121,12 +121,12 @@ public class Main {
     private static void find_kids(List<Task> tasks) {
         for (int i = 0; i < tasks.size(); i++) {
 
-            System.out.println();
+            // System.out.println();
             Task task = tasks.get(i);
-            System.out.println(i);
-            System.out.println(tasks.get(i).toString());
+            // System.out.println(i);
+            // System.out.println(tasks.get(i).toString());
             if (task.isBase()) {
-                System.out.println("Based\n");
+                // System.out.println("Based\n");
                 continue;
             }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
@@ -145,9 +145,9 @@ public class Main {
                                             t.getEnd() == task.getEnd())
                             .findFirst()
                             .orElse(null);
-            System.out.println(tasks.indexOf(r_child));
-            System.out.println(tasks.indexOf(l_child));
-            System.out.println();
+            // System.out.println(tasks.indexOf(r_child));
+            // System.out.println(tasks.indexOf(l_child));
+            // System.out.println();
             task.setChildren(r_child, l_child);
 
         }
