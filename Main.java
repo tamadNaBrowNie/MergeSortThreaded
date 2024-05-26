@@ -121,7 +121,7 @@ public class Main {
             ExecutorService pool = Executors.newFixedThreadPool(threads);
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
-                System.out.println("IN");
+                // System.out.println("IN");
                 tasks.forEach(i -> pool.execute(i));
             }
             pool.shutdown();
