@@ -12,13 +12,17 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(seed);
         // TODO: Get array size and thread count from user'
+        System.out.print("Enter array size N: ");
         Scanner scanner = new Scanner(System.in);
         int[] arr = new int[scanner.nextInt()];
+        System.out.println("Shuffled array:");
         for (int i = 0; i < arr.length; i++) {
             arr[i] = rand.nextInt(arr.length);
             // TODO:BUFFER THIS
             // System.out.println(arr[i]);
         }
+
+        System.out.println();
         System.out.println();
 
         int threads = scanner.nextInt();
