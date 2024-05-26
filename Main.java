@@ -45,9 +45,9 @@ public class Main {
     }
 
     private static boolean isSorted(int[] arr) {
-        for (int i : arr) {
-            System.out.println(i);
-        }
+        // for (int i : arr) {
+        // System.out.println(i);
+        // }
         for (int i = 0; i < arr.length - 1; i++) {
             if (arr[i] > arr[i + 1])
                 return false;
