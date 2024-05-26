@@ -15,7 +15,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
-            System.out.print("\nEnter array size N: ");
+            System.out.print("\nEnter array size N and");
             System.out.print("# of threads (its an exponent raising 2): ");
             doTasks(scanner.nextInt(), scanner.nextInt());
         } else {
