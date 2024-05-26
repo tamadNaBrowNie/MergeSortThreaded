@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -16,20 +17,53 @@ public class Main {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = rand.nextInt(arr.length);
             // TODO:BUFFER THIS
-            System.out.println(arr[i]);
+            // System.out.println(arr[i]);
         }
         System.out.println();
-        List<Task> tasks = new ArrayList<Task>();
-        int threads = scanner.nextInt();
-        if (threads == 1)
-            generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-        else {
 
+        int threads = scanner.nextInt();
+        scanner.close();
+        List<Interval> intervals = generate_intervals(0, arr.length - 1);
+        // intervals.forEach((c) -> System.out.printf("\n%d %d\n", c.getStart(),
+        // c.getEnd()));
+        if (threads == 1)
+            intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
+        else {
+            List<Task> tasks = new ArrayList<Task>();
+            intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
+            Collections.reverse(tasks);
+            // The commented code snippet you provided is a loop that iterates over the list
+            // of tasks
+            // and sets the children for each task. Here's a breakdown of what each part of
+            // the code is
+            // doing:
+            tasks.forEach(t -> System.out.println(t.toString()));
+            System.out.println();
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                System.out.println(i);
+                System.out.println(tasks.get(i).toString());
+                if (task.isBase())
+                    continue;
+                int left = i * 2 + 1, right = i * 2 + 2;
+                // if (left < tasks.size() && right < tasks.size())
+                if (tasks.size() > left || tasks.size() > right)
+                    task.setChildren(tasks.get(left), tasks.get(right));
+                // else
+                // tasks.get(i).setChildren(tasks.get(i + 1), tasks.get(i + 2));
+                try {
+                    System.out.println(tasks.get(i).getL().toString());
+                    System.out.println(tasks.get(i).getR().toString());
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
+            }
             try {
 
                 ExecutorService pool = Executors.newFixedThreadPool(threads);
+
                 // new Task(new Interval(0, arr.length - 1), tasks, arr);
-                tasks = generate_tasks(0, arr.length - 1, arr);
+                // tasks = generate_tasks(0, arr.length - 1, arr);
                 while (tasks.stream().anyMatch(task -> task.isDone() == false))
                     tasks.forEach(i -> pool.execute(i));
                 pool.shutdown();
@@ -45,7 +79,7 @@ public class Main {
         for (int i : arr) {
             System.out.println(i);
         }
-        scanner.close();
+
         // TODO: Call the generate_intervals method to generate the merge
         // sequence
         // TODO: Call merge on each interval in sequence
@@ -96,37 +130,6 @@ public class Main {
         }
 
         return retval;
-    }
-
-    public static List<Task> generate_tasks(int start, int end, int[] arr) {
-        List<Task> frontier = new ArrayList<>();
-        Task head = new Task(new Interval(start, end), arr);
-        frontier.add(head);
-
-        int i = 0;
-        while (i < frontier.size()) {
-            head = frontier.get(i);
-            int s = head.getStart();
-            int e = head.getEnd();
-
-            i++;
-
-            // if base case
-            if (s == e) {
-                continue;
-            }
-
-            // compute midpoint
-            int m = s + ((e - s) >> 1);
-            Task left = new Task(new Interval(s, m), arr),
-                    right = new Task(new Interval(m + 1, e), arr);
-            head.setChildren(left, right);
-            // add prerequisite intervals
-            frontier.add(left);
-            frontier.add(right);
-        }
-
-        return frontier;
     }
 
     /*
@@ -201,6 +204,11 @@ class Task implements Runnable {
     private Task l_child, r_child;
     private boolean done = false;
     private int[] array;
+    private boolean base;
+
+    public boolean isBase() {
+        return base;
+    }
 
     public boolean isDone() {
         return done;
@@ -212,6 +220,14 @@ class Task implements Runnable {
 
     public int getEnd() {
         return this.interval.getEnd();
+    }
+
+    public Task getR() {
+        return r_child;
+    }
+
+    public Task getL() {
+        return l_child;
     }
 
     public void run() {
@@ -236,40 +252,13 @@ class Task implements Runnable {
         this.interval = i;
         array = arr;
         l_child = r_child = null;
+        base = interval.getEnd() == interval.getStart();
     }
 
-    Task(Interval i, List<Task> tasks, int[] arr) {
-        interval = i;
-        this.array = arr;
-        tasks.add(this);
-        int s = i.getStart(),
-                e = i.getEnd();
-        if (s == e) {
-            r_child = l_child = null;
-            return;
-        }
-        int num = s + e;
-        Interval left = new Interval(s, num >> 1);
-        // OLD code for searching intervals
-        /*
-         * list.stream()
-         * .filter(
-         * child -> child.getStart() == i.getStart()
-         * && child.getEnd() == (i.getStart() + i.getEnd()) >> 1)
-         * .findFirst()
-         * .orElse(null);
-         */
-        Interval right = new Interval((num + 2) >> 1, e);
-        /*
-         * list.stream()
-         * .filter(child -> child.getEnd() == i.getEnd()
-         * && child.getStart() == ((i.getStart() + i.getEnd()) >> 1) + 1)
-         * .findFirst()
-         * .orElse(null);
-         */
-        l_child = new Task(left, tasks, arr);
-        r_child = new Task(right, tasks, arr);
-
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return String.format("%d %d", interval.getStart(), interval.getEnd());
     }
 
 }
