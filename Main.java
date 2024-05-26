@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -11,7 +12,7 @@ public class Main {
         // TODO: Seed your randomizer
 
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4 }, data = { 8, 16, 27, 31, (1 << 14) - 2331, (1 << 21) - 1, 1 << 23 };
+        int[] cores = { 0, 1, 2, 3, 4 }, data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 13) - 1, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
         System.out.println("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
@@ -93,11 +94,20 @@ public class Main {
                 intervals.stream().map(c -> new Task(c, arr)).forEach(d -> tasks.add(d));
         }
 
-        // tasks.forEach(t -> System.out.println(t.toString()));
-        // System.out.println();
         if ((arr.length & -arr.length) == arr.length) {
             Collections.reverse(tasks);
-            makeTree(tasks);
+            int left = 1, right = 2;
+            for (Task t : tasks) {
+
+                if (t.isBase())
+                    continue;
+
+                Task l_child = tasks.get(left),
+                        r_child = tasks.get(right);
+                t.setChildren(r_child, l_child);
+                left += 2;
+                right += 2;
+            }
         } else
             find_kids(tasks);
 
@@ -120,50 +130,50 @@ public class Main {
 
     }
 
-    private static void find_kids(List<Task> tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
+    private static int key(int start, int end) {
+        // from https://stackoverflow.com/a/13871379
+        return start < end ? start + end * end : start * start + start + end;
+    }
 
-            // System.out.println();
-            Task task = tasks.get(i);
+    private static void find_kids(List<Task> tasks) {
+
+        HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+        // tasks.forEach(task -> System.out.println(task));
+        for (Task t : tasks) {
+            task_map.put(key(t.getStart(), t.getEnd()), t);
+        }
+
+        for (int i = 0; i < tasks.size(); i++) {
             // System.out.println(i);
-            // System.out.println(tasks.get(i).toString());
+            Task task = tasks.get(i);
             if (task.isBase()) {
                 // System.out.println("Based\n");
                 continue;
             }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-            // STUPID AHCK
-            // TODO: Parallelize dependency searc
-            Task l_child = tasks.stream()
-                    .filter(
-                            t -> t.getStart() == task.getStart()
-                                    &&
-                                    t.getEnd() == m)
-                    .findFirst()
-                    .orElse(null),
-                    r_child = tasks.stream()
-                            .filter(
-                                    t -> t.getStart() == m + 1
-                                            &&
-                                            t.getEnd() == task.getEnd())
-                            .findFirst()
-                            .orElse(null);
+            // THANK FUCK FOR HASHMAPS
+            Task l_child = task_map.get(key(task.getStart(), m)),
+                    // tasks.stream()
+                    // .filter(
+                    // t -> t.getStart() == task.getStart()
+                    // &&
+                    // t.getEnd() == m)
+                    // .findFirst()
+                    // .orElse(null),
+                    r_child = task_map.get(key(m + 1, task.getEnd()));
+            // tasks.stream()
+            // .filter(
+            // t -> t.getStart() == m + 1
+            // &&
+            // t.getEnd() == task.getEnd())
+            // .findFirst()
+            // .orElse(null);
+            // System.out.println();
             // System.out.println(tasks.indexOf(r_child));
             // System.out.println(tasks.indexOf(l_child));
             // System.out.println();
             task.setChildren(r_child, l_child);
 
-        }
-    }
-
-    private static void makeTree(List<Task> tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).isBase())
-                continue;
-            int left = i * 2 + 1, right = i * 2 + 2;
-            Task l_child = tasks.get(left),
-                    r_child = tasks.get(right);
-            tasks.get(i).setChildren(r_child, l_child);
         }
     }
 
@@ -278,6 +288,11 @@ class Interval {
 // Prefer composition over inheritance.
 class Task implements Runnable {
     private Interval interval;
+
+    public Interval getInterval() {
+        return interval;
+    }
+
     private Task l_child, r_child;
     private boolean done = false;
     private int[] array;
@@ -336,6 +351,14 @@ class Task implements Runnable {
     public String toString() {
         // TODO Auto-generated method stub
         return String.format("%d %d", interval.getStart(), interval.getEnd());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // TODO Auto-generated method stub
+        return super.equals(obj)
+                || (((Task) obj).getStart() == this.getStart()
+                        && ((Task) obj).getEnd() == this.getEnd());
     }
 
 }
