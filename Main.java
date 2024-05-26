@@ -17,8 +17,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
-            System.out.print("\nEnter array size N and");
-            System.out.print("# of threads (its an exponent raising 2): ");
+            System.out.print("\nEnter array size N and # of threads (its an exponent raising 2): ");
             doTasks(scanner.nextInt(), scanner.nextInt());
 
             scanner.close();
@@ -97,30 +96,29 @@ public class Main {
                 intervals.forEach(c -> tasks.add(new Task(c, arr)));
 
         }
-
-        if ((arr.length & -arr.length) == arr.length) {
-            Collections.reverse(tasks);
-            int left = 1, right = 2;
-            Task l_child, r_child;
-            for (Task t : tasks) {
-
-                if (t.isBase())
-                    continue;
-
-                l_child = tasks.get(left);
-                r_child = tasks.get(right);
-                t.setChildren(r_child, l_child);
-                left += 2;
-                right += 2;
-            }
-        } else
-            find_kids(tasks);
-
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
+            // TODO paralleize all the foreach loops
+            if ((arr.length & -arr.length) == arr.length) {
+                Collections.reverse(tasks);
+                int left = 1, right = 2;
+                Task l_child, r_child;
+                for (Task t : tasks) {
+
+                    if (t.isBase())
+                        continue;
+
+                    l_child = tasks.get(left);
+                    r_child = tasks.get(right);
+                    t.setChildren(r_child, l_child);
+                    left += 2;
+                    right += 2;
+                }
+            } else
+                find_kids(tasks);
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
