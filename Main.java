@@ -19,19 +19,20 @@ public class Main {
             System.out.print("# of threads (its an exponent raising 2): ");
             doTasks(scanner.nextInt(), scanner.nextInt());
         } else {
-            for (int i = 0; i < data.length; i++) {
-                System.out.println("\n n= " + data[i]);
-                for (int j = 0; j < cores.length; j++) {
-                    System.out.println("threads= " + cores[j]);
-                    for (int k = 0; k < 4; k++) {
-                        System.out.println("Test " + k);
-                        doTasks(data[i], cores[j]);
+            for (int h = 0; h < 5; h++) {
+                for (int i = 0; i < data.length; i++) {
+                    System.out.println("\n n= " + data[i]);
+                    for (int j = 0; j < cores.length; j++) {
+                        System.out.println("threads= " + cores[j]);
+                        for (int k = 0; k < 3; k++) {
+                            System.out.println("Test " + k);
+                            doTasks(data[i], cores[j]);
+                        }
+                        System.out.println();
                     }
                     System.out.println();
                 }
-                System.out.println();
             }
-
         }
 
         scanner.close();
