@@ -23,6 +23,7 @@ public class Main {
         } else {
             scanner.close();
             for (int h = 0; h < 5; h++) {
+                System.out.println();
                 for (int i = 0; i < data.length; i++) {
                     System.out.println("\n n= " + data[i]);
                     for (int j = 0; j < cores.length; j++) {
@@ -33,7 +34,7 @@ public class Main {
                         }
                         System.out.println();
                     }
-                    System.out.println();
+
                 }
             }
         }
