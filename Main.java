@@ -27,7 +27,9 @@ public class Main {
                         System.out.println("Test " + k);
                         doTasks(data[i], cores[j]);
                     }
+                    System.out.println();
                 }
+                System.out.println();
             }
 
         }
