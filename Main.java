@@ -122,7 +122,7 @@ public class Main {
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
-                tasks.forEach(i -> pool.execute(i));
+                tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
             pool.shutdown();
 
