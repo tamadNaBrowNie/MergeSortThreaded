@@ -15,9 +15,9 @@ public class Main {
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
                 data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Test mode? 0 is no else yes");
+        System.out.print("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
-            System.out.print("\nEnter array size N and # of threads (its an exponent raising 2): ");
+            System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
             doTasks(scanner.nextInt(), scanner.nextInt());
 
             scanner.close();
@@ -25,16 +25,16 @@ public class Main {
             scanner.close();
 
             for (int h = 1; h < 6; h++) {
-                System.out.println();
+                System.out.println(h);
                 for (int i = 0; i < data.length; i++) {
-                    System.out.println("\n n= " + data[i]);
+                    System.out.println("n= " + data[i]);
                     for (int j = 0; j < cores.length; j++) {
                         System.out.println("threads= " + cores[j]);
                         for (int k = 1; k < 4; k++) {
                             System.out.println("Test " + k);
                             doTasks(data[i], cores[j]);
                         }
-                        System.out.println();
+
                     }
 
                 }
