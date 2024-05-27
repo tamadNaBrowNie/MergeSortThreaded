@@ -13,11 +13,19 @@ public class Main {
         Random rand = new Random(0);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+<<<<<<< last_working2
                 data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 4, 2 };
+=======
+                data = { 8, 27, 262153, 1 << 23 };
+>>>>>>> main
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
+        long startTime = 0;
+        long endTime = 0;
+        long elapsedTime = endTime - startTime;
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+<<<<<<< last_working2
             int n = scanner.nextInt(), p = scanner.nextInt();
             doTasks(n, p, rand);
 
@@ -33,6 +41,34 @@ public class Main {
                     for (int k = 1; k < 4; k++) {
                         System.out.printf("Test %d size = %d  threads= %d ", k, dat, 1 << core);
                         doTasks(dat, core, rand);
+=======
+            int n = scanner.nextInt();
+            int p = scanner.nextInt();
+            startTime = System.currentTimeMillis();
+            doTasks(n, p, rand);
+            endTime = System.currentTimeMillis();
+            elapsedTime = endTime - startTime;
+            System.out.printf(" %d ms \n", elapsedTime);
+            scanner.close();
+            return;
+        }
+
+        scanner.close();
+
+        for (int h = 1; h < 6; h++) {
+            System.out.println(h);
+            for (int dat : data) {
+                System.out.print("n= " + dat);
+                for (int core : cores) {
+                    System.out.println(" threads= " + (1 << core));
+                    for (int k = 1; k < 4; k++) {
+                        System.out.print("Test " + k);
+                        startTime = System.currentTimeMillis();
+                        doTasks(dat, core, rand);
+                        endTime = System.currentTimeMillis();
+                        elapsedTime = endTime - startTime;
+                        System.out.printf(" %d ms \n", elapsedTime);
+>>>>>>> main
                     }
 
                 }
@@ -98,6 +134,7 @@ public class Main {
             int left = 1, right = 2;
             Task l_child, r_child;
             for (Task t : tasks) {
+<<<<<<< last_working2
 
                 if (!t.isBase())
 
@@ -112,6 +149,57 @@ public class Main {
             }
         } else
             find_kids(tasks);
+=======
+
+                if (t.isBase())
+                    continue;
+
+                l_child = tasks.get(left);
+                r_child = tasks.get(right);
+                t.setChildren(r_child, l_child);
+                left += 2;
+                right += 2;
+            }
+        } else {
+
+            HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+            // tasks.forEach(task -> System.out.println(task));
+            for (Task t : tasks) {
+                task_map.put(key(t.getStart(), t.getEnd()), t);
+            }
+
+            for (Task task : tasks) {
+                // System.out.println(i);
+
+                if (task.isBase()) {
+                    // System.out.println("Based\n");
+                    continue;
+
+                }
+                final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
+                // THANK FUCK FOR HASHMAPS
+                Task l_child = task_map.get(key(task.getStart(), m)),
+                        // tasks.stream()
+                        // .filter(
+                        // t -> t.getStart() == task.getStart()
+                        // &&
+                        // t.getEnd() == m)
+                        // .findFirst()
+                        // .orElse(null),
+                        r_child = task_map.get(key(m + 1, task.getEnd()));
+
+                task.setChildren(r_child, l_child);
+
+            }
+
+        }
+
+        try {
+            // Slow? yes. Stupid? its not stupid if it works.
+            // Using Executor service basically makes this pull based.
+
+            ExecutorService pool = Executors.newFixedThreadPool(threads);
+>>>>>>> main
 
         try {
             // Slow? yes. Stupid? its not stupid if it works.
@@ -120,10 +208,15 @@ public class Main {
             ExecutorService pool = Executors.newFixedThreadPool(threads);
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
+                // for (Task task : tasks) {
+                // if (!task.isDone() && (task.getL() == null || task.getL().isDone())
+                // && (task.getR() == null || task.getR().isDone())) {
+                // pool.execute(task);
+                // }
+                // }
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
             pool.shutdown();
-
             // wait for pool to dry
             while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
                 ;
@@ -135,41 +228,9 @@ public class Main {
 
     }
 
-    private static int key(int start, int end) {
+    public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
         return start < end ? start + end * end : start * start + start + end;
-    }
-
-    private static void find_kids(List<Task> tasks) {
-
-        HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
-        // tasks.forEach(task -> System.out.println(task));
-        for (Task t : tasks) {
-            task_map.put(key(t.getStart(), t.getEnd()), t);
-        }
-
-        for (int i = 0; i < tasks.size(); i++) {
-            // System.out.println(i);
-            Task task = tasks.get(i);
-            if (task.isBase()) {
-                // System.out.println("Based\n");
-                continue;
-            }
-            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-            // THANK FUCK FOR HASHMAPS
-            Task l_child = task_map.get(key(task.getStart(), m)),
-                    // tasks.stream()
-                    // .filter(
-                    // t -> t.getStart() == task.getStart()
-                    // &&
-                    // t.getEnd() == m)
-                    // .findFirst()
-                    // .orElse(null),
-                    r_child = task_map.get(key(m + 1, task.getEnd()));
-
-            task.setChildren(r_child, l_child);
-
-        }
     }
 
     /*
@@ -289,6 +350,15 @@ class Task implements Runnable {
     }
 
     private Task l_child, r_child;
+
+    public Task getR_child() {
+        return r_child;
+    }
+
+    public Task getL_child() {
+        return l_child;
+    }
+
     private boolean done = false;
     private int[] array;
     private boolean base;
@@ -317,6 +387,7 @@ class Task implements Runnable {
         return l_child;
     }
 
+    @Override
     public void run() {
 
         boolean left = (l_child == null) ? true : l_child.isDone(),
@@ -357,3 +428,51 @@ class Task implements Runnable {
     }
 
 }
+/*
+ * class TreeMaker implements Callable<Task> {
+ * private int l, r;
+ * Task t;
+ * List<Task> tasks;
+ * 
+ * TreeMaker(Task t, int left, int right, List<Task> tasks) {
+ * this.t = t;
+ * this.l = left;
+ * this.r = right;
+ * this.tasks = tasks;
+ * }
+ * 
+ * @Override
+ * public Task call() throws Exception {
+ * // TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * t.setChildren(tasks.get(l), tasks.get(r));
+ * return t;
+ * }
+ * }/*
+ */
+
+/*
+ * class MapFinder implements Callable<Task> {
+ * private Task t;
+ * private HashMap<Integer, Task> tasks;
+ * 
+ * public MapFinder(Task t, HashMap<Integer, Task> tasks) {
+ * this.t = t;
+ * this.tasks = tasks;
+ * }
+ * 
+ * public Task call() {
+ * TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
+ * Task l_child = tasks.get(Main.key(t.getStart(), m)),
+ * r_child = tasks.get(Main.key(m + 1, t.getEnd()));
+ * 
+ * // System.out.println(t + " " + l_child + " " + r_child);
+ * t.setChildren(r_child, l_child);
+ * return t;
+ * }
+ * }
+ */
