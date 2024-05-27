@@ -133,6 +133,7 @@ public class Main {
                 if (task.isBase()) {
                     // System.out.println("Based\n");
                     continue;
+
                 }
                 final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
                 // THANK FUCK FOR HASHMAPS
@@ -149,6 +150,7 @@ public class Main {
                 task.setChildren(r_child, l_child);
 
             }
+
         }
 
         try {
@@ -156,16 +158,16 @@ public class Main {
             // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
+
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
-            pool.shutdown();
 
             // wait for pool to dry
             while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
                 ;
-
+            pool.shutdown();
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
@@ -173,7 +175,7 @@ public class Main {
 
     }
 
-    private static int key(int start, int end) {
+    public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
         return start < end ? start + end * end : start * start + start + end;
     }
@@ -364,3 +366,51 @@ class Task implements Runnable {
     }
 
 }
+/*
+ * class TreeMaker implements Callable<Task> {
+ * private int l, r;
+ * Task t;
+ * List<Task> tasks;
+ * 
+ * TreeMaker(Task t, int left, int right, List<Task> tasks) {
+ * this.t = t;
+ * this.l = left;
+ * this.r = right;
+ * this.tasks = tasks;
+ * }
+ * 
+ * @Override
+ * public Task call() throws Exception {
+ * // TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * t.setChildren(tasks.get(l), tasks.get(r));
+ * return t;
+ * }
+ * }/*
+ */
+
+/*
+ * class MapFinder implements Callable<Task> {
+ * private Task t;
+ * private HashMap<Integer, Task> tasks;
+ * 
+ * public MapFinder(Task t, HashMap<Integer, Task> tasks) {
+ * this.t = t;
+ * this.tasks = tasks;
+ * }
+ * 
+ * public Task call() {
+ * TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
+ * Task l_child = tasks.get(Main.key(t.getStart(), m)),
+ * r_child = tasks.get(Main.key(m + 1, t.getEnd()));
+ * 
+ * // System.out.println(t + " " + l_child + " " + r_child);
+ * t.setChildren(r_child, l_child);
+ * return t;
+ * }
+ * }
+ */
