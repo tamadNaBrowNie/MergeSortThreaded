@@ -25,8 +25,11 @@ public class Main {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
 
             int n = scanner.nextInt(), p = scanner.nextInt();
+            startTime = System.currentTimeMillis();
             doTasks(n, p, rand);
 
+            elapsedTime = System.currentTimeMillis() - startTime;
+            System.out.printf("took %d ms\n", elapsedTime);
             scanner.close();
             return;
         }
@@ -38,7 +41,10 @@ public class Main {
                 for (int core : cores) {
                     for (int k = 1; k < 4; k++) {
                         System.out.printf("Test %d size = %d  threads= %d ", k, dat, 1 << core);
+                        startTime = System.currentTimeMillis();
                         doTasks(dat, core, rand);
+                        elapsedTime = System.currentTimeMillis() - startTime;
+                        System.out.printf(" took %d ms\n", elapsedTime);
                     }
 
                 }
@@ -90,7 +96,7 @@ public class Main {
         switch (threads) {
             case 1:
                 intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-                System.out.println("array sorted? " + isSorted(arr));
+                System.out.print("array sorted? " + isSorted(arr));
             case 0:
                 return;
             default:
@@ -154,13 +160,7 @@ public class Main {
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
-                // System.out.println("IN");
-                // for (Task task : tasks) {
-                // if (!task.isDone() && (task.getL() == null || task.getL().isDone())
-                // && (task.getR() == null || task.getR().isDone())) {
-                // pool.execute(task);
-                // }
-                // }
+
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
             pool.shutdown();
@@ -171,7 +171,7 @@ public class Main {
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
-        System.out.println("array sorted? " + isSorted(arr));
+        System.out.print("array sorted? " + isSorted(arr));
 
     }
 
