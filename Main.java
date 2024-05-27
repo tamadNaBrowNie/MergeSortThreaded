@@ -171,11 +171,11 @@ public class Main {
                 // }
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
-
+            pool.shutdown();
             // wait for pool to dry
             while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
                 ;
-            pool.shutdown();
+
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
