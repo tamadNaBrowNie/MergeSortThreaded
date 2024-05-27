@@ -162,7 +162,13 @@ public class Main {
             ExecutorService pool = Executors.newFixedThreadPool(threads);
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
-
+                // System.out.println("IN");
+                // for (Task task : tasks) {
+                // if (!task.isDone() && (task.getL() == null || task.getL().isDone())
+                // && (task.getR() == null || task.getR().isDone())) {
+                // pool.execute(task);
+                // }
+                // }
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
             }
             pool.shutdown();
@@ -377,3 +383,51 @@ class Task implements Runnable {
     }
 
 }
+/*
+ * class TreeMaker implements Callable<Task> {
+ * private int l, r;
+ * Task t;
+ * List<Task> tasks;
+ * 
+ * TreeMaker(Task t, int left, int right, List<Task> tasks) {
+ * this.t = t;
+ * this.l = left;
+ * this.r = right;
+ * this.tasks = tasks;
+ * }
+ * 
+ * @Override
+ * public Task call() throws Exception {
+ * // TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * t.setChildren(tasks.get(l), tasks.get(r));
+ * return t;
+ * }
+ * }/*
+ */
+
+/*
+ * class MapFinder implements Callable<Task> {
+ * private Task t;
+ * private HashMap<Integer, Task> tasks;
+ * 
+ * public MapFinder(Task t, HashMap<Integer, Task> tasks) {
+ * this.t = t;
+ * this.tasks = tasks;
+ * }
+ * 
+ * public Task call() {
+ * TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
+ * Task l_child = tasks.get(Main.key(t.getStart(), m)),
+ * r_child = tasks.get(Main.key(m + 1, t.getEnd()));
+ * 
+ * // System.out.println(t + " " + l_child + " " + r_child);
+ * t.setChildren(r_child, l_child);
+ * return t;
+ * }
+ * }
+ */
