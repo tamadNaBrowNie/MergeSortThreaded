@@ -16,10 +16,16 @@ public class Main {
                 data = { 8, 27, 262153, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
+        long startTime = 0;
+        long endTime = 0;
+        long elapsedTime = endTime - startTime;
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+            startTime = System.currentTimeMillis();
             doTasks(scanner.nextInt(), scanner.nextInt(), rand);
-
+            endTime = System.currentTimeMillis();
+            elapsedTime = endTime - startTime;
+            System.out.printf(" %d ms \n", elapsedTime);
             scanner.close();
             return;
         }
@@ -34,7 +40,11 @@ public class Main {
                     System.out.println(" threads= " + (1 << core));
                     for (int k = 1; k < 4; k++) {
                         System.out.print("Test " + k);
+                        startTime = System.currentTimeMillis();
                         doTasks(dat, core, rand);
+                        endTime = System.currentTimeMillis();
+                        elapsedTime = endTime - startTime;
+                        System.out.printf(" %d ms \n", elapsedTime);
                     }
 
                 }
