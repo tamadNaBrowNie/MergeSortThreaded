@@ -14,7 +14,7 @@ public class Main {
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
-                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 4, 2 };
+                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 4 };
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
@@ -52,20 +52,13 @@ public class Main {
                         int[] arr = new int[dat];
                         doTasks(dat, core, rand, arr);
                         elapsedTime = System.currentTimeMillis() - startTime;
-                        System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
+                        System.out.printf(" took %d ms array sorted? %b \n", elapsedTime, isSorted(arr));
                     }
 
                 }
 
             }
         }
-
-        // TODO: Call the generate_intervals method to generate the merge
-        // sequence
-        // TODO: Call merge on each interval in sequence
-
-        // Once you get the single-threaded version to work, it's time to
-        // implement the concurrent version. Good luck :)
 
     }
 
@@ -164,13 +157,19 @@ public class Main {
             // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
+            // TODO: Change from spin lock
+            // This spin lock spins my head right round...
+            tasks.stream().filter(task -> task.isBase()).forEach(task -> pool.execute(task));
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
 
-                tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
+                tasks.stream()
+                        .filter(task -> !task.isDone())
+                        // && !task.isBase() && task.getL().isDone()&& task.getR().isDone())
+                        .forEach(task -> pool.execute(task));
             }
             pool.shutdown();
             // wait for pool to dry
-            while (!pool.awaitTermination(0, TimeUnit.MICROSECONDS))
+            while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
                 ;
 
         } catch (InterruptedException e) {
