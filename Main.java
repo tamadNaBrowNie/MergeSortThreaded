@@ -13,28 +13,38 @@ public class Main {
         Random rand = new Random(0);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
-                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
+                data = { 8, 27, 262153, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
+        long startTime = 0;
+        long endTime = 0;
+        long elapsedTime = endTime - startTime;
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+            startTime = System.currentTimeMillis();
             doTasks(scanner.nextInt(), scanner.nextInt(), rand);
-
+            endTime = System.currentTimeMillis();
+            elapsedTime = endTime - startTime;
+            System.out.printf(" %d ms \n", elapsedTime);
             scanner.close();
-        } else {
-            scanner.close();
+            return;
+        }
 
-            for (int h = 1; h < 6; h++) {
-                System.out.println(h);
-                for (int dat : data) {
-                    System.out.print("n= " + dat);
-                    for (int core : cores) {
-                        System.out.println(" threads= " + core);
-                        for (int k = 1; k < 4; k++) {
-                            System.out.println("Test " + k);
-                            doTasks(dat, core, rand);
-                        }
+        scanner.close();
 
+        for (int h = 1; h < 6; h++) {
+            System.out.println(h);
+            for (int dat : data) {
+                System.out.print("n= " + dat);
+                for (int core : cores) {
+                    System.out.println(" threads= " + (1 << core));
+                    for (int k = 1; k < 4; k++) {
+                        System.out.print("Test " + k);
+                        startTime = System.currentTimeMillis();
+                        doTasks(dat, core, rand);
+                        endTime = System.currentTimeMillis();
+                        elapsedTime = endTime - startTime;
+                        System.out.printf(" %d ms \n", elapsedTime);
                     }
 
                 }
@@ -93,47 +103,62 @@ public class Main {
                 intervals.forEach(c -> tasks.add(new Task(c, arr)));
 
         }
+        // TODO paralleize all the foreach loops
+        if ((arr.length & -arr.length) == arr.length) {
+            Collections.reverse(tasks);
+            int left = 1, right = 2;
+            Task l_child, r_child;
+            for (Task t : tasks) {
+
+                if (t.isBase())
+                    continue;
+
+                l_child = tasks.get(left);
+                r_child = tasks.get(right);
+                t.setChildren(r_child, l_child);
+                left += 2;
+                right += 2;
+            }
+        } else {
+
+            HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+            // tasks.forEach(task -> System.out.println(task));
+            for (Task t : tasks) {
+                task_map.put(key(t.getStart(), t.getEnd()), t);
+            }
+
+            for (Task task : tasks) {
+                // System.out.println(i);
+
+                if (task.isBase()) {
+                    // System.out.println("Based\n");
+                    continue;
+
+                }
+                final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
+                // THANK FUCK FOR HASHMAPS
+                Task l_child = task_map.get(key(task.getStart(), m)),
+                        // tasks.stream()
+                        // .filter(
+                        // t -> t.getStart() == task.getStart()
+                        // &&
+                        // t.getEnd() == m)
+                        // .findFirst()
+                        // .orElse(null),
+                        r_child = task_map.get(key(m + 1, task.getEnd()));
+
+                task.setChildren(r_child, l_child);
+
+            }
+
+        }
+
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
-            List<Callable<Task>> callables = new ArrayList<Callable<Task>>();
 
-            if ((arr.length & -arr.length) == arr.length) {
-                Collections.reverse(tasks);
-                int left = 1, right = 2;
-                // Task l_child, r_child;
-
-                for (Task t : tasks) {
-                    // if()
-                    if (!t.isBase() && left < tasks.size() && right < tasks.size())
-                        t.setChildren(tasks.get(left), tasks.get(right));
-                    // callables.add(new TreeMaker(t, left, right, tasks));
-                    left += 2;
-                    right += 2;
-                }
-
-            } else
-
-            {
-                HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
-
-                for (Task t : tasks) {
-                    task_map.put(key(t.getStart(), t.getEnd()), t);
-                }
-                for (Task t : tasks) {
-                    if (t.isBase())
-                        continue;
-                    final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
-                    // THANK FUCK FOR HASHMAPS
-                    Task l_child = task_map.get(Main.key(t.getStart(), m)),
-                            r_child = task_map.get(Main.key(m + 1, t.getEnd()));
-
-                    // System.out.println(t + " " + l_child + " " + r_child);
-                    t.setChildren(r_child, l_child);
-                }
-            }
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
@@ -300,6 +325,7 @@ class Task implements Runnable {
         return l_child;
     }
 
+    @Override
     public void run() {
 
         boolean left = (l_child == null) ? true : l_child.isDone(),
