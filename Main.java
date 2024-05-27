@@ -106,10 +106,10 @@ public class Main {
                 // Task l_child, r_child;
 
                 for (Task t : tasks) {
-
-                    // if (!t.isBase() && left < tasks.size() && right < tasks.size())
-                    // t.setChildren(tasks.get(left), tasks.get(right));
-                    callables.add(new TreeMaker(t, left, right, tasks));
+                    // if()
+                    if (!t.isBase() && left < tasks.size() && right < tasks.size())
+                        t.setChildren(tasks.get(left), tasks.get(right));
+                    // callables.add(new TreeMaker(t, left, right, tasks));
                     left += 2;
                     right += 2;
                 }
@@ -122,18 +122,18 @@ public class Main {
                 for (Task t : tasks) {
                     task_map.put(key(t.getStart(), t.getEnd()), t);
                 }
-                // for (Task t : tasks) {
-                // if (t.isBase())
-                // continue;
-                // final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
-                // // THANK FUCK FOR HASHMAPS
-                // Task l_child = task_map.get(Main.key(t.getStart(), m)),
-                // r_child = task_map.get(Main.key(m + 1, t.getEnd()));
+                for (Task t : tasks) {
+                    if (t.isBase())
+                        continue;
+                    final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
+                    // THANK FUCK FOR HASHMAPS
+                    Task l_child = task_map.get(Main.key(t.getStart(), m)),
+                            r_child = task_map.get(Main.key(m + 1, t.getEnd()));
 
-                // // System.out.println(t + " " + l_child + " " + r_child);
-                // t.setChildren(r_child, l_child);
-                // }
-                tasks.forEach((task) -> callables.add(new MapFinder(task, task_map)));
+                    // System.out.println(t + " " + l_child + " " + r_child);
+                    t.setChildren(r_child, l_child);
+                }
+                // tasks.forEach((task) -> callables.add(new MapFinder(task, task_map)));
             }
             pool.invokeAll(callables);
             // irresponsibly calling invokeall
@@ -266,51 +266,6 @@ class Interval {
     }
 }
 
-class TreeMaker implements Callable<Task> {
-    private int l, r;
-    Task t;
-    List<Task> tasks;
-
-    TreeMaker(Task t, int left, int right, List<Task> tasks) {
-        this.t = t;
-        this.l = left;
-        this.r = right;
-        this.tasks = tasks;
-    }
-
-    @Override
-    public Task call() throws Exception {
-        // TODO Auto-generated method
-        if (t.isBase())
-            return t;
-        t.setChildren(tasks.get(l), tasks.get(r));
-        return t;
-    }
-}
-
-class MapFinder implements Callable<Task> {
-    private Task t;
-    private HashMap<Integer, Task> tasks;
-
-    public MapFinder(Task t, HashMap<Integer, Task> tasks) {
-        this.t = t;
-        this.tasks = tasks;
-    }
-
-    public Task call() {
-        // TODO Auto-generated method
-        if (t.isBase())
-            return t;
-        final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
-        Task l_child = tasks.get(Main.key(t.getStart(), m)),
-                r_child = tasks.get(Main.key(m + 1, t.getEnd()));
-
-        // System.out.println(t + " " + l_child + " " + r_child);
-        t.setChildren(r_child, l_child);
-        return t;
-    }
-}
-
 // Prefer composition over inheritance.
 class Task implements Runnable {
     private Interval interval;
@@ -388,3 +343,51 @@ class Task implements Runnable {
     }
 
 }
+/*
+ * class TreeMaker implements Callable<Task> {
+ * private int l, r;
+ * Task t;
+ * List<Task> tasks;
+ * 
+ * TreeMaker(Task t, int left, int right, List<Task> tasks) {
+ * this.t = t;
+ * this.l = left;
+ * this.r = right;
+ * this.tasks = tasks;
+ * }
+ * 
+ * @Override
+ * public Task call() throws Exception {
+ * // TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * t.setChildren(tasks.get(l), tasks.get(r));
+ * return t;
+ * }
+ * }/*
+ */
+
+/*
+ * class MapFinder implements Callable<Task> {
+ * private Task t;
+ * private HashMap<Integer, Task> tasks;
+ * 
+ * public MapFinder(Task t, HashMap<Integer, Task> tasks) {
+ * this.t = t;
+ * this.tasks = tasks;
+ * }
+ * 
+ * public Task call() {
+ * TODO Auto-generated method
+ * if (t.isBase())
+ * return t;
+ * final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
+ * Task l_child = tasks.get(Main.key(t.getStart(), m)),
+ * r_child = tasks.get(Main.key(m + 1, t.getEnd()));
+ * 
+ * // System.out.println(t + " " + l_child + " " + r_child);
+ * t.setChildren(r_child, l_child);
+ * return t;
+ * }
+ * }
+ */
