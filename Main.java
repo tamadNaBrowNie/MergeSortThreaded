@@ -21,8 +21,10 @@ public class Main {
         long elapsedTime = endTime - startTime;
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+            int n = scanner.nextInt();
+            int p = scanner.nextInt();
             startTime = System.currentTimeMillis();
-            doTasks(scanner.nextInt(), scanner.nextInt(), rand);
+            doTasks(n, p, rand);
             endTime = System.currentTimeMillis();
             elapsedTime = endTime - startTime;
             System.out.printf(" %d ms \n", elapsedTime);
