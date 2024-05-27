@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         // TODO: Seed your randomizer
-        Random rand = new Random(0);
+        Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
@@ -76,7 +76,7 @@ public class Main {
 
     private static void doTasks(int n, int p, Random rand, int[] arr) {
 
-        if (n < 1)
+        if (n < 2)
             return;
 
         // System.out.println("Array done");
