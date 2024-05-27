@@ -114,8 +114,37 @@ public class Main {
                     left += 2;
                     right += 2;
                 }
-            } else
-                find_kids(tasks);
+            } else {
+
+                HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+                // tasks.forEach(task -> System.out.println(task));
+                for (Task t : tasks) {
+                    task_map.put(key(t.getStart(), t.getEnd()), t);
+                }
+
+                for (int i = 0; i < tasks.size(); i++) {
+                    // System.out.println(i);
+                    Task task = tasks.get(i);
+                    if (task.isBase()) {
+                        // System.out.println("Based\n");
+                        continue;
+                    }
+                    final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
+                    // THANK FUCK FOR HASHMAPS
+                    Task l_child = task_map.get(key(task.getStart(), m)),
+                            // tasks.stream()
+                            // .filter(
+                            // t -> t.getStart() == task.getStart()
+                            // &&
+                            // t.getEnd() == m)
+                            // .findFirst()
+                            // .orElse(null),
+                            r_child = task_map.get(key(m + 1, task.getEnd()));
+
+                    task.setChildren(r_child, l_child);
+
+                }
+            }
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
@@ -137,38 +166,6 @@ public class Main {
     private static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
         return start < end ? start + end * end : start * start + start + end;
-    }
-
-    private static void find_kids(List<Task> tasks) {
-
-        HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
-        // tasks.forEach(task -> System.out.println(task));
-        for (Task t : tasks) {
-            task_map.put(key(t.getStart(), t.getEnd()), t);
-        }
-
-        for (int i = 0; i < tasks.size(); i++) {
-            // System.out.println(i);
-            Task task = tasks.get(i);
-            if (task.isBase()) {
-                // System.out.println("Based\n");
-                continue;
-            }
-            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-            // THANK FUCK FOR HASHMAPS
-            Task l_child = task_map.get(key(task.getStart(), m)),
-                    // tasks.stream()
-                    // .filter(
-                    // t -> t.getStart() == task.getStart()
-                    // &&
-                    // t.getEnd() == m)
-                    // .findFirst()
-                    // .orElse(null),
-                    r_child = task_map.get(key(m + 1, task.getEnd()));
-
-            task.setChildren(r_child, l_child);
-
-        }
     }
 
     /*
