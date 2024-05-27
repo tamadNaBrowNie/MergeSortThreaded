@@ -158,7 +158,14 @@ public class Main {
             ExecutorService pool = Executors.newFixedThreadPool(threads);
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
-                tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
+                for (Task task : tasks) {
+                    if (!task.isDone() && (task.getL() == null || task.getL().isDone())
+                            && (task.getR() == null || task.getR().isDone())) {
+                        pool.execute(task);
+                    }
+                }
+                // tasks.stream().filter(task -> !task.isDone()).forEach(task ->
+                // pool.execute(task));
             }
             pool.shutdown();
 
@@ -295,6 +302,15 @@ class Task implements Runnable {
     }
 
     private Task l_child, r_child;
+
+    public Task getR_child() {
+        return r_child;
+    }
+
+    public Task getL_child() {
+        return l_child;
+    }
+
     private boolean done = false;
     private int[] array;
     private boolean base;
