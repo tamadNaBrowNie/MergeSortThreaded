@@ -18,9 +18,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
-        long startTime = 0;
-        long endTime = 0;
-        long elapsedTime = endTime - startTime;
+        long startTime = 0, elapsedTime = 0;
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
 
@@ -37,6 +35,11 @@ public class Main {
             startTime = System.currentTimeMillis();
             doTasks(n, p, rand, arr);
 
+            // The above code is calculating the elapsed time in milliseconds by subtracting
+            // the `startTime` from
+            // the current system time obtained using `System.currentTimeMillis()`. The
+            // result is stored in the
+            // variable `elapsedTime`.
             elapsedTime = System.currentTimeMillis() - startTime;
             System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
             scanner.close();
