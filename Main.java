@@ -25,6 +25,14 @@ public class Main {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
 
             int n = scanner.nextInt(), p = scanner.nextInt();
+
+            while (n < 2 || n > 1 << 23 || p < 0 || p > 10) {
+                System.out.println("Bad input, try again");
+                System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+                n = scanner.nextInt();
+                p = scanner.nextInt();
+            }
+
             int[] arr = new int[n];
             startTime = System.currentTimeMillis();
             doTasks(n, p, rand, arr);
@@ -75,9 +83,6 @@ public class Main {
     }
 
     private static void doTasks(int n, int p, Random rand, int[] arr) {
-
-        if (n < 2)
-            return;
 
         // System.out.println("Array done");
 
