@@ -31,15 +31,10 @@ public class Main {
                 p = scanner.nextInt();
             }
 
-            int[] arr = new int[n];
             startTime = System.currentTimeMillis();
+            int[] arr = new int[n];
             doTasks(n, p, rand, arr);
 
-            // The above code is calculating the elapsed time in milliseconds by subtracting
-            // the `startTime` from
-            // the current system time obtained using `System.currentTimeMillis()`. The
-            // result is stored in the
-            // variable `elapsedTime`.
             elapsedTime = System.currentTimeMillis() - startTime;
             System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
             scanner.close();
