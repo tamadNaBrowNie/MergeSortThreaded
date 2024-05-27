@@ -13,7 +13,7 @@ public class Main {
         Random rand = new Random(0);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
-                data = { 8, 27, 16383, 1 << 23 };
+                data = { 8, 27, 262153, 1 << 23 };
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
