@@ -105,12 +105,14 @@ public class Main {
                 Task l_child, r_child;
                 for (Task t : tasks) {
 
-                    if (t.isBase())
-                        continue;
+                    if (!t.isBase())
 
-                    l_child = tasks.get(left);
-                    r_child = tasks.get(right);
-                    t.setChildren(r_child, l_child);
+                    {
+                        l_child = tasks.get(left);
+                        r_child = tasks.get(right);
+                        t.setChildren(r_child, l_child);
+
+                    }
                     left += 2;
                     right += 2;
                 }
