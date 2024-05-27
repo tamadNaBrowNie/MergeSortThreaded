@@ -25,11 +25,12 @@ public class Main {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
 
             int n = scanner.nextInt(), p = scanner.nextInt();
+            int[] arr = new int[n];
             startTime = System.currentTimeMillis();
-            doTasks(n, p, rand);
+            doTasks(n, p, rand, arr);
 
             elapsedTime = System.currentTimeMillis() - startTime;
-            System.out.printf("took %d ms\n", elapsedTime);
+            System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
             scanner.close();
             return;
         }
@@ -42,9 +43,10 @@ public class Main {
                     for (int k = 1; k < 4; k++) {
                         System.out.printf("Test %d size = %d  threads= %d ", k, dat, 1 << core);
                         startTime = System.currentTimeMillis();
-                        doTasks(dat, core, rand);
+                        int[] arr = new int[dat];
+                        doTasks(dat, core, rand, arr);
                         elapsedTime = System.currentTimeMillis() - startTime;
-                        System.out.printf(" took %d ms\n", elapsedTime);
+                        System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
                     }
 
                 }
@@ -72,11 +74,11 @@ public class Main {
         return true;
     }
 
-    private static void doTasks(int n, int p, Random rand) {
+    private static void doTasks(int n, int p, Random rand, int[] arr) {
 
         if (n < 1)
             return;
-        int[] arr = new int[n];
+
         // System.out.println("Array done");
 
         for (int i = 0; i < arr.length; i++)
@@ -96,7 +98,7 @@ public class Main {
         switch (threads) {
             case 1:
                 intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-                System.out.print("array sorted? " + isSorted(arr));
+
             case 0:
                 return;
             default:
@@ -171,7 +173,6 @@ public class Main {
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
-        System.out.print("array sorted? " + isSorted(arr));
 
     }
 
