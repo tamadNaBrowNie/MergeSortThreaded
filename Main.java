@@ -13,11 +13,9 @@ public class Main {
         Random rand = new Random(0);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
-<<<<<<< last_working2
+
                 data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 4, 2 };
-=======
-                data = { 8, 27, 262153, 1 << 23 };
->>>>>>> main
+
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
         long startTime = 0;
@@ -25,7 +23,7 @@ public class Main {
         long elapsedTime = endTime - startTime;
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
-<<<<<<< last_working2
+
             int n = scanner.nextInt(), p = scanner.nextInt();
             doTasks(n, p, rand);
 
@@ -41,34 +39,6 @@ public class Main {
                     for (int k = 1; k < 4; k++) {
                         System.out.printf("Test %d size = %d  threads= %d ", k, dat, 1 << core);
                         doTasks(dat, core, rand);
-=======
-            int n = scanner.nextInt();
-            int p = scanner.nextInt();
-            startTime = System.currentTimeMillis();
-            doTasks(n, p, rand);
-            endTime = System.currentTimeMillis();
-            elapsedTime = endTime - startTime;
-            System.out.printf(" %d ms \n", elapsedTime);
-            scanner.close();
-            return;
-        }
-
-        scanner.close();
-
-        for (int h = 1; h < 6; h++) {
-            System.out.println(h);
-            for (int dat : data) {
-                System.out.print("n= " + dat);
-                for (int core : cores) {
-                    System.out.println(" threads= " + (1 << core));
-                    for (int k = 1; k < 4; k++) {
-                        System.out.print("Test " + k);
-                        startTime = System.currentTimeMillis();
-                        doTasks(dat, core, rand);
-                        endTime = System.currentTimeMillis();
-                        elapsedTime = endTime - startTime;
-                        System.out.printf(" %d ms \n", elapsedTime);
->>>>>>> main
                     }
 
                 }
@@ -134,22 +104,6 @@ public class Main {
             int left = 1, right = 2;
             Task l_child, r_child;
             for (Task t : tasks) {
-<<<<<<< last_working2
-
-                if (!t.isBase())
-
-                {
-                    l_child = tasks.get(left);
-                    r_child = tasks.get(right);
-                    t.setChildren(r_child, l_child);
-
-                }
-                left += 2;
-                right += 2;
-            }
-        } else
-            find_kids(tasks);
-=======
 
                 if (t.isBase())
                     continue;
@@ -193,13 +147,6 @@ public class Main {
             }
 
         }
-
-        try {
-            // Slow? yes. Stupid? its not stupid if it works.
-            // Using Executor service basically makes this pull based.
-
-            ExecutorService pool = Executors.newFixedThreadPool(threads);
->>>>>>> main
 
         try {
             // Slow? yes. Stupid? its not stupid if it works.
