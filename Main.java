@@ -13,31 +13,30 @@ public class Main {
         Random rand = new Random(0);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
-                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 1, 1 << 23 };
+                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 4, 2 };
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
         if (0 == scanner.nextInt()) {
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
-            doTasks(scanner.nextInt(), scanner.nextInt(), rand);
+            int n = scanner.nextInt(), p = scanner.nextInt();
+            doTasks(n, p, rand);
 
             scanner.close();
-        } else {
-            scanner.close();
+            return;
+        }
+        scanner.close();
 
-            for (int h = 1; h < 6; h++) {
-                System.out.println(h);
-                for (int dat : data) {
-                    System.out.print("n= " + dat);
-                    for (int core : cores) {
-                        System.out.println(" threads= " + core);
-                        for (int k = 1; k < 4; k++) {
-                            System.out.println("Test " + k);
-                            doTasks(dat, core, rand);
-                        }
-
+        for (int h = 1; h < 6; h++) {
+            System.out.println("\nrun" + h);
+            for (int dat : data) {
+                for (int core : cores) {
+                    for (int k = 1; k < 4; k++) {
+                        System.out.printf("Test %d size = %d  threads= %d ", k, dat, 1 << core);
+                        doTasks(dat, core, rand);
                     }
 
                 }
+
             }
         }
 
@@ -85,7 +84,7 @@ public class Main {
         switch (threads) {
             case 1:
                 intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-                System.out.println("\narray sorted? " + isSorted(arr));
+                System.out.println("array sorted? " + isSorted(arr));
             case 0:
                 return;
             default:
@@ -93,32 +92,32 @@ public class Main {
                 intervals.forEach(c -> tasks.add(new Task(c, arr)));
 
         }
+        // TODO paralleize all the foreach loops
+        if ((arr.length & -arr.length) == arr.length) {
+            Collections.reverse(tasks);
+            int left = 1, right = 2;
+            Task l_child, r_child;
+            for (Task t : tasks) {
+
+                if (!t.isBase())
+
+                {
+                    l_child = tasks.get(left);
+                    r_child = tasks.get(right);
+                    t.setChildren(r_child, l_child);
+
+                }
+                left += 2;
+                right += 2;
+            }
+        } else
+            find_kids(tasks);
+
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
-            // TODO paralleize all the foreach loops
-            if ((arr.length & -arr.length) == arr.length) {
-                Collections.reverse(tasks);
-                int left = 1, right = 2;
-                Task l_child, r_child;
-                for (Task t : tasks) {
-
-                    if (!t.isBase())
-
-                    {
-                        l_child = tasks.get(left);
-                        r_child = tasks.get(right);
-                        t.setChildren(r_child, l_child);
-
-                    }
-                    left += 2;
-                    right += 2;
-                }
-            } else
-                find_kids(tasks);
-
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
@@ -132,7 +131,7 @@ public class Main {
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
-        System.out.println("\narray sorted? " + isSorted(arr));
+        System.out.println("array sorted? " + isSorted(arr));
 
     }
 
