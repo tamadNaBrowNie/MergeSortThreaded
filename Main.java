@@ -133,10 +133,7 @@ public class Main {
                     // System.out.println(t + " " + l_child + " " + r_child);
                     t.setChildren(r_child, l_child);
                 }
-                // tasks.forEach((task) -> callables.add(new MapFinder(task, task_map)));
             }
-            pool.invokeAll(callables);
-            // irresponsibly calling invokeall
             while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
                 // System.out.println("IN");
                 tasks.stream().filter(task -> !task.isDone()).forEach(task -> pool.execute(task));
