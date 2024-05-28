@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -5,10 +8,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
@@ -28,31 +34,34 @@ public class Main {
                 System.out.println("Bad input, try again");
                 System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
                 n = scanner.nextInt();
-                p = scanner.nextInt();
+                p = 1 << scanner.nextInt();
             }
 
             startTime = System.currentTimeMillis();
             int[] arr = new int[n];
-            doTasks(n, p, rand, arr);
+            doTasks(p, rand, arr);
 
             elapsedTime = System.currentTimeMillis() - startTime;
             System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
             scanner.close();
             return;
         }
+        // BufferedWriter writer = new BufferedWriter(new
+        // FileWriter(scanner.nextLine()), 655368);
         scanner.close();
-
+        int siz;
         for (int h = 1; h < 6; h++) {
-            System.out.println("\nrun" + h);
+            System.out.println("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
+                    siz = 1 << core;
                     for (int k = 1; k < 4; k++) {
-                        System.out.printf("Test %d size = %d  threads= %d ", k, dat, 1 << core);
                         startTime = System.currentTimeMillis();
                         int[] arr = new int[dat];
-                        doTasks(dat, core, rand, arr);
+                        doTasks(siz, rand, arr);
                         elapsedTime = System.currentTimeMillis() - startTime;
-                        System.out.printf(" took %d ms array sorted? %b \n", elapsedTime, isSorted(arr));
+                        System.out.printf("\nTest %d size = %d  threads= %d took %d ms array sorted? %b",
+                                k, dat, siz, elapsedTime, isSorted(arr));
                     }
 
                 }
@@ -73,7 +82,7 @@ public class Main {
         return true;
     }
 
-    private static void doTasks(int n, int p, Random rand, int[] arr) {
+    private static void doTasks(int threads, Random rand, int[] arr) {
 
         // System.out.println("Array done");
 
@@ -87,86 +96,36 @@ public class Main {
             arr[index] = arr[i];
             arr[i] = a;
         }
-        int threads = 1 << p;
+
         // System.out.println("Array shuffed");
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
+        if (threads > 1) {
+            threaded(arr, threads, intervals);
+            return;
+        }
+        intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
+
+    }
+
+    private static void threaded(int[] arr, int threads, List<Interval> intervals) {
         List<Task> tasks = new ArrayList<Task>();
-        switch (threads) {
-            case 1:
-                intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-
-            case 0:
-                return;
-            default:
-                // System.out.println("Mapping tasks");
-                intervals.forEach(c -> tasks.add(new Task(c, arr)));
-
-        }
-        // TODO paralleize all the foreach loops
-        if ((arr.length & -arr.length) == arr.length) {
-            Collections.reverse(tasks);
-            int left = 1, right = 2;
-            Task l_child, r_child;
-            for (Task t : tasks) {
-
-                if (t.isBase())
-                    continue;
-
-                l_child = tasks.get(left);
-                r_child = tasks.get(right);
-                t.setChildren(r_child, l_child);
-                left += 2;
-                right += 2;
-            }
-        } else {
-
-            HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
-            // tasks.forEach(task -> System.out.println(task));
-            for (Task t : tasks) {
-                task_map.put(key(t.getStart(), t.getEnd()), t);
-            }
-
-            for (Task task : tasks) {
-                // System.out.println(i);
-
-                if (task.isBase()) {
-                    // System.out.println("Based\n");
-                    continue;
-
-                }
-                final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-                // THANK FUCK FOR HASHMAPS
-                Task l_child = task_map.get(key(task.getStart(), m)),
-                        // tasks.stream()
-                        // .filter(
-                        // t -> t.getStart() == task.getStart()
-                        // &&
-                        // t.getEnd() == m)
-                        // .findFirst()
-                        // .orElse(null),
-                        r_child = task_map.get(key(m + 1, task.getEnd()));
-
-                task.setChildren(r_child, l_child);
-
-            }
-
-        }
-
+        intervals.forEach(c -> tasks.add(new Task(c, arr)));
+        Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
+        func.accept(tasks);
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
 
             ExecutorService pool = Executors.newFixedThreadPool(threads);
             // TODO: Change from spin lock
-            // This spin lock spins my head right round...
+            // This spins my head right round...
             tasks.stream().filter(task -> task.isBase()).forEach(task -> pool.execute(task));
-            while (tasks.stream().anyMatch(task -> task.isDone() == false)) {
+            while (tasks.stream().anyMatch(task -> task.isDone() == false))
 
                 tasks.stream()
                         .filter(task -> !task.isDone())
-                        // && !task.isBase() && task.getL().isDone()&& task.getR().isDone())
                         .forEach(task -> pool.execute(task));
-            }
+
             pool.shutdown();
             // wait for pool to dry
             while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
@@ -175,12 +134,62 @@ public class Main {
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
-
     }
 
     public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
         return start < end ? start + end * end : start * start + start + end;
+    }
+
+    private static void mapTree(List<Task> tasks) {
+        HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+        // tasks.forEach(task -> System.out.println(task));
+
+        for (Task t : tasks) {
+            task_map.put(key(t.getStart(), t.getEnd()), t);
+        }
+
+        for (Task task : tasks) {
+            // System.out.println(i);
+
+            if (task.isBase()) {
+                // System.out.println("Based\n");
+                continue;
+
+            }
+            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
+            // THANK FUCK FOR HASHMAPS
+            Task l_child = task_map.get(key(task.getStart(), m)),
+                    // tasks.stream()
+                    // .filter(
+                    // t -> t.getStart() == task.getStart()
+                    // &&
+                    // t.getEnd() == m)
+                    // .findFirst()
+                    // .orElse(null),
+                    r_child = task_map.get(key(m + 1, task.getEnd()));
+
+            task.setChildren(r_child, l_child);
+
+        }
+
+    }
+
+    private static void getTree(List<Task> tasks) {
+        Collections.reverse(tasks);
+        int left = 1, right = 2;
+        Task l_child, r_child;
+        for (Task t : tasks) {
+
+            if (!t.isBase()) {
+                l_child = tasks.get(left);
+                r_child = tasks.get(right);
+                t.setChildren(r_child, l_child);
+            }
+            left += 2;
+            right += 2;
+        }
+
     }
 
     /*
