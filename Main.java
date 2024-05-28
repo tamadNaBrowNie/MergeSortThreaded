@@ -116,7 +116,7 @@ public class Main {
 
     private static void threaded(int[] arr, int threads, List<Interval> intervals) {
         List<Task> tasks = new ArrayList<Task>();
-        intervals.forEach(c -> tasks.add(new Task(c, arr)));
+        intervals.forEach(i -> tasks.add(new Task(i, arr)));
         Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
         func.accept(tasks);
         try {
@@ -127,6 +127,7 @@ public class Main {
             // TODO: Change from spin lock
             // This spins my head right round...
             tasks.stream().filter(task -> task.isBase()).forEach(task -> pool.execute(task));
+
             while (tasks.stream().anyMatch(task -> task.isDone() == false))
 
                 tasks.stream()
@@ -151,7 +152,7 @@ public class Main {
     private static void mapTree(List<Task> tasks) {
         HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
         // tasks.forEach(task -> System.out.println(task));
-
+        Task l_child, r_child;
         for (Task t : tasks) {
             task_map.put(key(t.getStart(), t.getEnd()), t);
         }
@@ -166,15 +167,15 @@ public class Main {
             }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
             // THANK FUCK FOR HASHMAPS
-            Task l_child = task_map.get(key(task.getStart(), m)),
-                    // tasks.stream()
-                    // .filter(
-                    // t -> t.getStart() == task.getStart()
-                    // &&
-                    // t.getEnd() == m)
-                    // .findFirst()
-                    // .orElse(null),
-                    r_child = task_map.get(key(m + 1, task.getEnd()));
+            l_child = task_map.get(key(task.getStart(), m));
+            // tasks.stream()
+            // .filter(
+            // t -> t.getStart() == task.getStart()
+            // &&
+            // t.getEnd() == m)
+            // .findFirst()
+            // .orElse(null),
+            r_child = task_map.get(key(m + 1, task.getEnd()));
 
             task.setChildren(r_child, l_child);
 
@@ -310,12 +311,14 @@ class Interval {
 // Prefer composition over inheritance.
 class Task implements Runnable {
     private Interval interval;
+    private boolean done = false;
+    private int[] array;
+    private boolean base;
+    private Task l_child, r_child;
 
     public Interval getInterval() {
         return interval;
     }
-
-    private Task l_child, r_child;
 
     public Task getR_child() {
         return r_child;
@@ -324,10 +327,6 @@ class Task implements Runnable {
     public Task getL_child() {
         return l_child;
     }
-
-    private boolean done = false;
-    private int[] array;
-    private boolean base;
 
     public boolean isBase() {
         return base;
@@ -343,14 +342,6 @@ class Task implements Runnable {
 
     public int getEnd() {
         return this.interval.getEnd();
-    }
-
-    public Task getR() {
-        return r_child;
-    }
-
-    public Task getL() {
-        return l_child;
     }
 
     @Override
@@ -376,7 +367,7 @@ class Task implements Runnable {
         this.interval = i;
         array = arr;
         l_child = r_child = null;
-        base = interval.getEnd() == interval.getStart();
+        base = done = interval.getEnd() == interval.getStart();
     }
 
     @Override
