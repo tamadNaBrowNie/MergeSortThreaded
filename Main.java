@@ -31,7 +31,9 @@ public class Main {
             return;
         }
         System.out.println("Write where:");
-        BufferedWriter writer = new BufferedWriter(new FileWriter(scanner.nextLine()), 131072);
+        scanner.nextLine();
+        String locale = scanner.nextLine();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(locale), 131072);
         // Test area
         scanner.close();
         int siz;
