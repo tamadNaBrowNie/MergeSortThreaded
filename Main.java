@@ -50,7 +50,7 @@ public class Main {
                         System.out.printf("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
                                 k, dat, siz, elapsedTime, isSorted(arr));
                     }
-                    System.out.printf("\n Mean: %f ms \n", (float) avg / 3);
+                    System.out.printf("\n Mean: %f ms", (float) avg / 3);
 
                 }
 
