@@ -26,28 +26,13 @@ public class Main {
         System.out.print("Test mode? 0 is no else yes");
         long startTime = 0, elapsedTime = 0;
         if (0 == scanner.nextInt()) {
-            System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
-
-            int n = scanner.nextInt(), p = scanner.nextInt();
-
-            while (n < 2 || n > 1 << 23 || p < 0 || p > 10) {
-                System.out.println("Bad input, try again");
-                System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
-                n = scanner.nextInt();
-                p = 1 << scanner.nextInt();
-            }
-
-            startTime = System.currentTimeMillis();
-            int[] arr = new int[n];
-            doTasks(p, rand, arr);
-
-            elapsedTime = System.currentTimeMillis() - startTime;
-            System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
+            demo(rand, scanner);
             scanner.close();
             return;
         }
         // BufferedWriter writer = new BufferedWriter(new
         // FileWriter(scanner.nextLine()), 655368);
+        // Test area
         scanner.close();
         int siz;
         for (int h = 1; h < 6; h++) {
@@ -69,6 +54,28 @@ public class Main {
             }
         }
 
+    }
+
+    private static void demo(Random rand, Scanner scanner) {
+        long startTime;
+        long elapsedTime;
+        System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+
+        int n = scanner.nextInt(), p = scanner.nextInt();
+
+        while (n < 2 || n > 1 << 23 || p < 0 || p > 10) {
+            System.out.println("Bad input, try again");
+            System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+            n = scanner.nextInt();
+            p = 1 << scanner.nextInt();
+        }
+
+        startTime = System.currentTimeMillis();
+        int[] arr = new int[n];
+        doTasks(p, rand, arr);
+
+        elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
     }
 
     private static boolean isSorted(int[] arr) {
