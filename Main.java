@@ -31,12 +31,12 @@ public class Main {
             return;
         }
         System.out.println("Write where:");
-        BufferedWriter writer = new BufferedWriter(new FileWriter(scanner.nextLine()), 655368);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(scanner.nextLine()), 131072);
         // Test area
         scanner.close();
         int siz;
         for (int h = 1; h < 6; h++) {
-            System.out.println("\n\nrun" + h);
+            writer.write("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
                     siz = 1 << core;
@@ -47,16 +47,17 @@ public class Main {
                         doTasks(siz, rand, arr);
                         elapsedTime = System.currentTimeMillis() - startTime;
                         avg += elapsedTime;
-                        System.out.printf("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
-                                k, dat, siz, elapsedTime, isSorted(arr));
+                        writer.write(String.format("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
+                                k, dat, siz, elapsedTime, isSorted(arr)));
                     }
-                    System.out.printf("\n Mean: %f ms", (float) avg / 3);
+                    writer.write("\n Mean:" + (float) avg / 3 + " ms");
 
                 }
 
             }
         }
-
+        writer.flush();
+        writer.close();
     }
 
     private static void demo(Random rand, Scanner scanner) {
