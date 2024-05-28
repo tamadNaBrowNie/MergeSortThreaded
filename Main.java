@@ -30,8 +30,8 @@ public class Main {
             scanner.close();
             return;
         }
-        // BufferedWriter writer = new BufferedWriter(new
-        // FileWriter(scanner.nextLine()), 655368);
+        System.out.println("Write where:");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(scanner.nextLine()), 655368);
         // Test area
         scanner.close();
         int siz;
@@ -40,14 +40,17 @@ public class Main {
             for (int dat : data) {
                 for (int core : cores) {
                     siz = 1 << core;
+                    Long avg = 0L;
                     for (int k = 1; k < 4; k++) {
                         startTime = System.currentTimeMillis();
                         int[] arr = new int[dat];
                         doTasks(siz, rand, arr);
                         elapsedTime = System.currentTimeMillis() - startTime;
-                        System.out.printf("\nTest %d size = %d  threads= %d took %d ms array sorted? %b",
+                        avg += elapsedTime;
+                        System.out.printf("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
                                 k, dat, siz, elapsedTime, isSorted(arr));
                     }
+                    System.out.printf("\n Mean: %f ms \n", (float) avg / 3);
 
                 }
 
@@ -106,16 +109,15 @@ public class Main {
 
         // System.out.println("Array shuffed");
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
-        if (threads > 1) {
+        if (threads > 1)
             threaded(arr, threads, intervals);
-            return;
-        }
-        intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
+        else
+            intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
 
     }
 
     private static void threaded(int[] arr, int threads, List<Interval> intervals) {
-        List<Task> tasks = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<Task>();
         intervals.forEach(i -> tasks.add(new Task(i, arr)));
         Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
         func.accept(tasks);
