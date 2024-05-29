@@ -131,14 +131,11 @@ public class Main {
             // ExecutorService pool = Executors.newFixedThreadPool(threads);
             // TODO: Change from spin lock
             // This spins my head right round...
-            pool.invokeAll(tasks.stream().filter(task -> task.isBase()).toList());
-            // .forEach(task -> pool.execute(task));
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false))
-                // TODO: ACTUALLY order it as it should be ordered
+                // TODO: ACTUALLY order it as it should be executed
                 pool.invokeAll(tasks.stream()
                         .filter(task -> !task.isDone()).toList());
-            // .forEach(task -> pool.execute(task));
 
             pool.shutdown();
             // wait for pool to dry
@@ -353,11 +350,20 @@ class Task implements Callable<Interval> {
     @Override
     public Interval call() {
 
-        boolean left = (l_child == null) ? true : l_child.isDone(),
-                right = (r_child == null) ? true : r_child.isDone();
-        if (done || !left || !right)
+        boolean left = (base) ? true : l_child.isDone(),
+                right = (base) ? true : r_child.isDone();
+        /*
+         * TODO: Something like this->
+         * while (!left.isDone || !right.isDone){
+         * left.wait();
+         * right.wait();
+         * }
+         * 
+         */
+        if (done || !left || !right) {
+            this.notify();
             return this.interval;
-
+        }
         Main.merge(array, interval.getStart(), interval.getEnd());
         done = true;
         return this.interval;
@@ -391,6 +397,7 @@ class Task implements Callable<Interval> {
     }
 
 }
+// TODO: Reimplement?
 /*
  * class TreeMaker implements Callable<Task> {
  * private int l, r;
@@ -406,7 +413,6 @@ class Task implements Callable<Interval> {
  * 
  * @Override
  * public Task call() throws Exception {
- * // TODO Auto-generated method
  * if (t.isBase())
  * return t;
  * t.setChildren(tasks.get(l), tasks.get(r));
