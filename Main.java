@@ -200,7 +200,7 @@ public class Main {
             left += 2;
             right += 2;
         }
-
+        Collections.reverse(tasks);
     }
 
     /*
