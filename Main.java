@@ -135,7 +135,7 @@ public class Main {
             // .forEach(task -> pool.execute(task));
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false))
-
+                // TODO: ACTUALLY order it as it should be ordered
                 pool.invokeAll(tasks.stream()
                         .filter(task -> !task.isDone()).toList());
             // .forEach(task -> pool.execute(task));
