@@ -19,7 +19,7 @@ public class Main {
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
-                data = { 8, 16, 27, 31, (1 << 12) - 2331, (1 << 14) - 4 };
+                data = { 8, 16, 27, 31, 1 << 23 };
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
@@ -126,17 +126,19 @@ public class Main {
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
-
-            ExecutorService pool = Executors.newFixedThreadPool(threads);
+            ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
+            ExecutorService pool = Executors.newFixedThreadPool(5, ThreadFactory);
+            // ExecutorService pool = Executors.newFixedThreadPool(threads);
             // TODO: Change from spin lock
             // This spins my head right round...
-            tasks.stream().filter(task -> task.isBase()).forEach(task -> pool.execute(task));
+            pool.invokeAll(tasks.stream().filter(task -> task.isBase()).toList());
+            // .forEach(task -> pool.execute(task));
 
             while (tasks.stream().anyMatch(task -> task.isDone() == false))
 
-                tasks.stream()
-                        .filter(task -> !task.isDone())
-                        .forEach(task -> pool.execute(task));
+                pool.invokeAll(tasks.stream()
+                        .filter(task -> !task.isDone()).toList());
+            // .forEach(task -> pool.execute(task));
 
             pool.shutdown();
             // wait for pool to dry
@@ -313,7 +315,7 @@ class Interval {
 }
 
 // Prefer composition over inheritance.
-class Task implements Runnable {
+class Task implements Callable<Interval> {
     private Interval interval;
     private boolean done = false;
     private int[] array;
@@ -349,16 +351,16 @@ class Task implements Runnable {
     }
 
     @Override
-    public void run() {
+    public Interval call() {
 
         boolean left = (l_child == null) ? true : l_child.isDone(),
                 right = (r_child == null) ? true : r_child.isDone();
         if (done || !left || !right)
-            return;
+            return this.interval;
 
         Main.merge(array, interval.getStart(), interval.getEnd());
         done = true;
-
+        return this.interval;
     }
 
     public void setChildren(Task l, Task r) {
