@@ -361,7 +361,6 @@ class Task implements Callable<Interval> {
          * 
          */
         if (done || !left || !right) {
-            this.notify();
             return this.interval;
         }
         Main.merge(array, interval.getStart(), interval.getEnd());
