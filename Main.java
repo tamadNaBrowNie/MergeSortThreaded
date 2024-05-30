@@ -119,16 +119,26 @@ public class Main {
     }
 
     private static void threaded(int[] arr, int threads, List<Interval> intervals) {
-        ArrayList<Task> tasks = new ArrayList<Task>();
-        intervals.forEach(i -> tasks.add(new Task(i, arr)));
-        Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
-        func.accept(tasks);
+
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
+
+            List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
+            // the line below takes 1 second at 2^23
+            intervals.forEach(i -> tasks.add(new Task(i, arr)));
+
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
-            ExecutorService pool = Executors.newFixedThreadPool(5, ThreadFactory);
-            // ExecutorService pool = Executors.newFixedThreadPool(threads);
+
+            ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
+
+            Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
+            // the line below also takes 1 second at 2^23
+            func.accept(tasks);
+            // it is a pain to parallelize and when i did, it somehow got 5x slower
+            // tldr; overhead for getting the dependency takes almost the same amount of
+            // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
+            // probably distribute it myself but too late)
             // TODO: Change from spin lock
             // This spins my head right round...
 
@@ -141,10 +151,11 @@ public class Main {
             // wait for pool to dry
             while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
                 ;
-
+            // System.out.println(System.currentTimeMillis() - startTime);
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
+
     }
 
     public static int key(int start, int end) {
@@ -156,6 +167,7 @@ public class Main {
         HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
         // tasks.forEach(task -> System.out.println(task));
         Task l_child, r_child;
+        long startTime = System.currentTimeMillis();
         for (Task t : tasks) {
             task_map.put(key(t.getStart(), t.getEnd()), t);
         }
@@ -183,6 +195,7 @@ public class Main {
             task.setChildren(r_child, l_child);
 
         }
+        System.out.println(System.currentTimeMillis() - startTime);
 
     }
 
@@ -190,6 +203,7 @@ public class Main {
         Collections.reverse(tasks);
         int left = 1, right = 2;
         Task l_child, r_child;
+
         for (Task t : tasks) {
 
             if (!t.isBase()) {
@@ -201,6 +215,7 @@ public class Main {
             right += 2;
         }
         Collections.reverse(tasks);
+
     }
 
     /*
@@ -349,27 +364,23 @@ class Task implements Callable<Interval> {
 
     @Override
     public Interval call() throws InterruptedException {
-        if (base||done)return this.interval;
-        boolean left =  l_child.isDone(),
-                right = r_child.isDone();
+        if (base || done)
+            return this.interval;
         /*
          * TODO: Something like this->
          * while (!left.isDone || !right.isDone){
          * left.wait();
          * right.wait();
          * }
-         * 
+         * why spin lock? java threads wait for no one. they can wake up early by
+         * themselves
          */
-        while(!l_child.isDone()) {
-            wait();
-            // FUCK SPURIOUS WAKE UP
-        }
-        while(!r_child.isDone()){
-            wait();
+        if (!l_child.isDone() || !r_child.isDone()) {
+            return interval;
         }
         Main.merge(array, interval.getStart(), interval.getEnd());
         done = true;
-        
+
         return this.interval;
     }
 
@@ -402,50 +413,48 @@ class Task implements Callable<Interval> {
 
 }
 // TODO: Reimplement?
-/*
- * class TreeMaker implements Callable<Task> {
- * private int l, r;
- * Task t;
- * List<Task> tasks;
- * 
- * TreeMaker(Task t, int left, int right, List<Task> tasks) {
- * this.t = t;
- * this.l = left;
- * this.r = right;
- * this.tasks = tasks;
- * }
- * 
- * @Override
- * public Task call() throws Exception {
- * if (t.isBase())
- * return t;
- * t.setChildren(tasks.get(l), tasks.get(r));
- * return t;
- * }
- * }/*
+
+class TreeMaker implements Callable<Task> {
+    private int l, r;
+    Task t;
+    List<Task> tasks;
+
+    TreeMaker(Task t, int left, int right, List<Task> tasks) {
+        this.t = t;
+        this.l = left;
+        this.r = right;
+        this.tasks = tasks;
+    }
+
+    @Override
+    public Task call() throws Exception {
+        if (t.isBase())
+            return t;
+        t.setChildren(tasks.get(l), tasks.get(r));
+        return t;
+    }
+}/*
  */
 
-/*
- * class MapFinder implements Callable<Task> {
- * private Task t;
- * private HashMap<Integer, Task> tasks;
- * 
- * public MapFinder(Task t, HashMap<Integer, Task> tasks) {
- * this.t = t;
- * this.tasks = tasks;
- * }
- * 
- * public Task call() {
- * TODO Auto-generated method
- * if (t.isBase())
- * return t;
- * final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
- * Task l_child = tasks.get(Main.key(t.getStart(), m)),
- * r_child = tasks.get(Main.key(m + 1, t.getEnd()));
- * 
- * // System.out.println(t + " " + l_child + " " + r_child);
- * t.setChildren(r_child, l_child);
- * return t;
- * }
- * }
- */
+class MapFinder implements Callable<Task> {
+    private Task t;
+    private HashMap<Integer, Task> tasks;
+
+    public MapFinder(Task t, HashMap<Integer, Task> tasks) {
+        this.t = t;
+        this.tasks = tasks;
+    }
+
+    public Task call() {
+        // TODO Auto-generated method
+        if (t.isBase())
+            return t;
+        final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
+        Task l_child = tasks.get(Main.key(t.getStart(), m)),
+                r_child = tasks.get(Main.key(m + 1, t.getEnd()));
+
+        // System.out.println(t + " " + l_child + " " + r_child);
+        t.setChildren(r_child, l_child);
+        return t;
+    }
+}
