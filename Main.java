@@ -119,16 +119,12 @@ public class Main {
         }
         // uses generated intervals if n is power of 2 because you can easily rebuild
         // the splitting "tree"
-        // performance is comparable to recursive version of the method though
+        // performance is comparable to recursive version though
+        // same case for n <32768
         // reason why we reimplemented the old reursive code was its speed and stability
-        // for large n that are none powers of 2
+        // for too large n that are none powers of 2
         // adding tings to hashmap takes too long because the hash function cannot
         // handle n > 323767
-
-        List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
-                // using the generated intervals is gucci for powers of 2
-                ? threaded(arr, generate_intervals(0, arr.length - 1))
-                : threaded(arr);
 
         try {
             // Slow? yes. Stupid? its not stupid if it works.
@@ -138,7 +134,11 @@ public class Main {
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
-
+            List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
+                    // using the generated intervals is gucci for powers of 2
+                    // can someone pls parallelize tis
+                    ? threaded(arr, generate_intervals(0, arr.length - 1))
+                    : threaded(arr);
             // System.out.println(System.currentTimeMillis() -
             // startTime);tem.currentTimeMillis() - startTime);
             // it is a pain to parallelize and when i did, it somehow got 5x slower
