@@ -348,10 +348,10 @@ class Task implements Callable<Interval> {
     }
 
     @Override
-    public Interval call() {
-
-        boolean left = (base) ? true : l_child.isDone(),
-                right = (base) ? true : r_child.isDone();
+    public Interval call() throws InterruptedException {
+        if (base||done)return this.interval;
+        boolean left =  l_child.isDone(),
+                right = r_child.isDone();
         /*
          * TODO: Something like this->
          * while (!left.isDone || !right.isDone){
@@ -360,11 +360,16 @@ class Task implements Callable<Interval> {
          * }
          * 
          */
-        if (done || !left || !right) {
-            return this.interval;
+        while(!l_child.isDone()) {
+            wait();
+            // FUCK SPURIOUS WAKE UP
+        }
+        while(!r_child.isDone()){
+            wait();
         }
         Main.merge(array, interval.getStart(), interval.getEnd());
         done = true;
+        
         return this.interval;
     }
 
