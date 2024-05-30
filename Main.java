@@ -17,9 +17,9 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+        int[] cores = { 0, 1, 2, 3 },
 
-                data = { 8, 16, 27, 31, 1 << 23 };
+                data = { 8, 27, 24, 31, 16380, (1 << 16) - 1, (1 << 23) };
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
@@ -36,7 +36,7 @@ public class Main {
         // Test area
         scanner.close();
         int siz;
-        for (int h = 1; h < 6; h++) {
+        for (int h = 1; h < 2; h++) {
             writer.write("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
@@ -48,11 +48,13 @@ public class Main {
                         doTasks(siz, rand, arr);
                         elapsedTime = System.currentTimeMillis() - startTime;
                         avg += elapsedTime;
-                        writer.write(String.format("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
-                                k, dat, siz, elapsedTime, isSorted(arr)));
+                        String msg = String.format("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
+                                k, dat, siz, elapsedTime, isSorted(arr));
+                        writer.write(msg);
+                        // System.out.println(msg);
                     }
                     writer.write("\n Mean:" + (float) avg / 3 + " ms");
-
+                    // writer.flush();
                 }
 
             }
@@ -110,63 +112,41 @@ public class Main {
         }
 
         // System.out.println("Array shuffed");
-        List<Interval> intervals = generate_intervals(0, arr.length - 1);
-        if (threads > 1)
-            threaded(arr, threads);
-        // threaded(arr, threads, intervals);
-        else
-            intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-
-    }
-
-    private static void threaded(int[] arr, int threads) {
-        ArrayList<Task> tasks = new ArrayList<Task>();
-        long startTime = System.currentTimeMillis();
-        new Task(new Interval(0, arr.length - 1), arr, tasks);
-
-        try {
-            ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
-            tasks.forEach(task -> System.out.println(task));
-            System.out.println(System.currentTimeMillis() - startTime);
-            ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
-            while (tasks.stream().anyMatch(task -> task.isDone() == false))
-                // TODO: ACTUALLY order it as it should be executed
-                pool.invokeAll(tasks.stream()
-                        .filter(task -> !task.isDone()).toList());
-
-            pool.shutdown();
-            // wait for pool to dry
-            while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
-                ;
-
-        } catch (InterruptedException e) {
-            System.err.println("Exec interrupted");
+        // List<Interval> intervals = generate_intervals(0, arr.length - 1);
+        if (threads == 1) {
+            generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
+            return;
         }
-    }
+        // uses generated intervals if n is power of 2 because you can easily rebuild
+        // the splitting "tree"
+        // performance is comparable to recursive version of the method though
+        // reason why we reimplemented the old reursive code was its speed and stability
+        // for large n that are none powers of 2
+        // adding tings to hashmap takes too long because the hash function cannot
+        // handle n > 323767
 
-    private static void threaded(int[] arr, int threads, List<Interval> intervals) {
+        List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
+                // using the generated intervals is gucci for powers of 2
+                ? threaded(arr, generate_intervals(0, arr.length - 1))
+                : threaded(arr);
 
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
-            long startTime = System.currentTimeMillis();
-            List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
-            // the line below takes 1 second at 2^23
-            intervals.forEach(i -> tasks.add(new Task(i, arr)));
+
             // new Task(new Interval(0, arr.length - 1), arr, tasks);
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
 
-            Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
-            // the line below also takes 1 second at 2^23
-            func.accept(tasks);
-
-            System.out.println(System.currentTimeMillis() - startTime);
+            // System.out.println(System.currentTimeMillis() -
+            // startTime);tem.currentTimeMillis() - startTime);
             // it is a pain to parallelize and when i did, it somehow got 5x slower
             // tldr; overhead for getting the dependency takes almost the same amount of
             // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
             // probably distribute it myself but too late)
+            // This is more true for non powers of 2 ergo adding the old recursive code
+
             // TODO: Change from spin lock
             // This spins my head right round...
 
@@ -176,7 +156,17 @@ public class Main {
                         .filter(task -> !task.isDone()).toList());
 
             pool.shutdown();
-            // wait for pool to dry
+            // wait for pool to dry.
+            // yes its a spinlock. a lot of waits in java are impatient.
+            // stability and speed are enemies apparently
+            // learned this trick from 'ere: https://stackoverflow.com/a/1250655
+            // they mentioned that malarkey happens if its not a spin lock
+            // i have experienced that malarkey both in primes and here
+            // this is also why a lot of examples of notify and wait in java use while loops
+            // its too prevent the thread from getting impatient whether
+            // 1. it took too long
+            // 2. something went wrong (spurious wake up
+            // http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
             while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
                 ;
 
@@ -186,38 +176,57 @@ public class Main {
 
     }
 
+    private static ArrayList<Task> threaded(int[] arr) {
+        ArrayList<Task> tasks = new ArrayList<Task>();
+        new Task(new Interval(0, arr.length - 1), arr, tasks);
+        return tasks;
+    }
+
+    private static List<Task> threaded(int[] arr, List<Interval> intervals) {
+        List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
+        // the line below takes 1 second at 2^23
+        Collections.reverse(intervals);
+        intervals.forEach(i -> tasks.add(new Task(i, arr)));
+        Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
+        // the line below also takes 1 second at 2^23
+        func.accept(tasks);
+        Collections.reverse(tasks);
+        return tasks;
+    }
+
     public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
-        // also known as Szudzik's pairing function. not that good for some cases. works
-        // until (65535, 65535) only
-        return (start < end ? start + end * end : start * start + start + end) * 31 * 17;
+        // also known as Szudzik's pairing function. starts colliding after n = (2^15)-1
+        // hence the slow down around >2^15
+        return (start < end ? start + end * end : start * start + start + end);
     }
 
     private static void mapTree(List<Task> tasks) {
 
-        HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
+        HashMap<Task, Task> task_map = new HashMap<Task, Task>();
         // tasks.forEach(task -> System.out.println(task));
         Task l_child, r_child;
-        long startTime = System.currentTimeMillis();
-        int start, end;
+
         for (Task t : tasks) {
             // WHY IS THIS LOOP SO SLOW?
-            start = t.getStart();
-            end = t.getEnd();
-            task_map.put(start < end ? start + end * end : start * start + start + end, t);
+            // A:Collisions
+            task_map.put(t, t);
+            // System.out.println(System.currentTimeMillis() - startTime);
         }
-        System.out.println(System.currentTimeMillis() - startTime);
-        for (Task task : tasks) {
+        // System.out.println(System.currentTimeMillis() -
+        // startTime);tem.currentTimeMillis() - startTime);
+
+        for (Task task : tasks.stream().filter(task -> !task.isBase()).toList()) {
             // System.out.println(i);
 
-            if (task.isBase()) {
-                // System.out.println("Based\n");
-                continue;
+            // if (task.isBase()) {
+            // // System.out.println("Based\n");
+            // continue;
 
-            }
+            // }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
             // THANK FUCK FOR HASHMAPS
-            l_child = task_map.get(key(task.getStart(), m));
+            l_child = task_map.get(new Task(new Interval(task.getStart(), m)));
             // tasks.stream()
             // .filter(
             // t -> t.getStart() == task.getStart()
@@ -225,7 +234,7 @@ public class Main {
             // t.getEnd() == m)
             // .findFirst()
             // .orElse(null),
-            r_child = task_map.get(key(m + 1, task.getEnd()));
+            r_child = task_map.get(new Task(new Interval(m + 1, task.getEnd())));
 
             task.setChildren(r_child, l_child);
 
@@ -234,7 +243,7 @@ public class Main {
     }
 
     private static void getTree(List<Task> tasks) {
-        Collections.reverse(tasks);
+        // Collections.reverse(tasks);
         int left = 1, right = 2;
         Task l_child, r_child;
 
@@ -248,7 +257,7 @@ public class Main {
             left += 2;
             right += 2;
         }
-        Collections.reverse(tasks);
+        // Collections.reverse(tasks);
 
     }
 
@@ -448,6 +457,11 @@ class Task implements Callable<Interval> {
         tasks.add(this);
         // System.out.println(tasks);
 
+    }
+
+    public Task(Interval interval) {
+        // TODO Auto-generated constructor stub
+        this.interval = interval;
     }
 
     @Override
