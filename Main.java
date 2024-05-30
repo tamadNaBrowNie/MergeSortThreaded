@@ -112,10 +112,36 @@ public class Main {
         // System.out.println("Array shuffed");
         List<Interval> intervals = generate_intervals(0, arr.length - 1);
         if (threads > 1)
-            threaded(arr, threads, intervals);
+            threaded(arr, threads);
+        // threaded(arr, threads, intervals);
         else
             intervals.forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
 
+    }
+
+    private static void threaded(int[] arr, int threads) {
+        ArrayList<Task> tasks = new ArrayList<Task>();
+        long startTime = System.currentTimeMillis();
+        new Task(new Interval(0, arr.length - 1), arr, tasks);
+
+        try {
+            ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
+            tasks.forEach(task -> System.out.println(task));
+            System.out.println(System.currentTimeMillis() - startTime);
+            ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
+            while (tasks.stream().anyMatch(task -> task.isDone() == false))
+                // TODO: ACTUALLY order it as it should be executed
+                pool.invokeAll(tasks.stream()
+                        .filter(task -> !task.isDone()).toList());
+
+            pool.shutdown();
+            // wait for pool to dry
+            while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
+                ;
+
+        } catch (InterruptedException e) {
+            System.err.println("Exec interrupted");
+        }
     }
 
     private static void threaded(int[] arr, int threads, List<Interval> intervals) {
@@ -123,11 +149,11 @@ public class Main {
         try {
             // Slow? yes. Stupid? its not stupid if it works.
             // Using Executor service basically makes this pull based.
-
+            long startTime = System.currentTimeMillis();
             List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
             // the line below takes 1 second at 2^23
             intervals.forEach(i -> tasks.add(new Task(i, arr)));
-
+            // new Task(new Interval(0, arr.length - 1), arr, tasks);
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
@@ -135,6 +161,8 @@ public class Main {
             Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
             // the line below also takes 1 second at 2^23
             func.accept(tasks);
+
+            System.out.println(System.currentTimeMillis() - startTime);
             // it is a pain to parallelize and when i did, it somehow got 5x slower
             // tldr; overhead for getting the dependency takes almost the same amount of
             // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
@@ -151,7 +179,7 @@ public class Main {
             // wait for pool to dry
             while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
                 ;
-            // System.out.println(System.currentTimeMillis() - startTime);
+
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
@@ -160,18 +188,25 @@ public class Main {
 
     public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
-        return start < end ? start + end * end : start * start + start + end;
+        // also known as Szudzik's pairing function. not that good for some cases. works
+        // until (65535, 65535) only
+        return (start < end ? start + end * end : start * start + start + end) * 31 * 17;
     }
 
     private static void mapTree(List<Task> tasks) {
+
         HashMap<Integer, Task> task_map = new HashMap<Integer, Task>();
         // tasks.forEach(task -> System.out.println(task));
         Task l_child, r_child;
         long startTime = System.currentTimeMillis();
+        int start, end;
         for (Task t : tasks) {
-            task_map.put(key(t.getStart(), t.getEnd()), t);
+            // WHY IS THIS LOOP SO SLOW?
+            start = t.getStart();
+            end = t.getEnd();
+            task_map.put(start < end ? start + end * end : start * start + start + end, t);
         }
-
+        System.out.println(System.currentTimeMillis() - startTime);
         for (Task task : tasks) {
             // System.out.println(i);
 
@@ -195,7 +230,6 @@ public class Main {
             task.setChildren(r_child, l_child);
 
         }
-        System.out.println(System.currentTimeMillis() - startTime);
 
     }
 
@@ -397,6 +431,25 @@ class Task implements Callable<Interval> {
         base = done = interval.getEnd() == interval.getStart();
     }
 
+    // Old Task implementation should reduce amount of traversals.
+    Task(Interval i, int[] arr, ArrayList<Task> tasks) {
+        this.interval = i;
+        array = arr;
+        base = done = interval.getEnd() == interval.getStart();
+        if (interval.getEnd() == interval.getStart())
+            l_child = r_child = null;
+        else {
+            int s = getStart(), e = getEnd(), m = s + (e - s) / 2;
+            l_child = new Task(new Interval(getStart(), m), arr, tasks);
+            r_child = new Task(new Interval(m + 1, getEnd()), arr, tasks);
+            // tasks.add(l_child);
+            // tasks.add(r_child);
+        }
+        tasks.add(this);
+        // System.out.println(tasks);
+
+    }
+
     @Override
     public String toString() {
         // TODO Auto-generated method stub
@@ -409,6 +462,12 @@ class Task implements Callable<Interval> {
         return super.equals(obj)
                 || (((Task) obj).getStart() == this.getStart()
                         && ((Task) obj).getEnd() == this.getEnd());
+    }
+
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return Main.key(getStart(), getEnd());
     }
 
 }
