@@ -17,9 +17,9 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3 },
+        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
-                data = { 8, 27, 24, 31, 16380, (1 << 16) - 1, (1 << 23) };
+                data = { 8, 27, 24, 31, 16380, (1 << 16) - 1, (1 << 16) + 1, (1 << 23), (1 << 23) - 1 };
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Test mode? 0 is no else yes");
@@ -36,7 +36,7 @@ public class Main {
         // Test area
         scanner.close();
         int siz;
-        for (int h = 1; h < 2; h++) {
+        for (int h = 1; h < 6; h++) {
             writer.write("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
@@ -54,7 +54,7 @@ public class Main {
                         // System.out.println(msg);
                     }
                     writer.write("\n Mean:" + (float) avg / 3 + " ms");
-                    // writer.flush();
+                    writer.flush();
                 }
 
             }
@@ -134,11 +134,14 @@ public class Main {
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
+            long start = System.currentTimeMillis();
             List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
                     // using the generated intervals is gucci for powers of 2
                     // can someone pls parallelize tis
                     ? threaded(arr, generate_intervals(0, arr.length - 1))
                     : threaded(arr);
+            Task root = tasks.get(tasks.size() - 1);
+            System.out.println(System.currentTimeMillis() - start + " n = " + arr.length);
             // System.out.println(System.currentTimeMillis() -
             // startTime);tem.currentTimeMillis() - startTime);
             // it is a pain to parallelize and when i did, it somehow got 5x slower
@@ -147,14 +150,16 @@ public class Main {
             // probably distribute it myself but too late)
             // This is more true for non powers of 2 ergo adding the old recursive code
 
-            // TODO: Change from spin lock
             // This spins my head right round...
 
-            while (tasks.stream().anyMatch(task -> task.isDone() == false))
-                // TODO: ACTUALLY order it as it should be executed
-                pool.invokeAll(tasks.stream()
-                        .filter(task -> !task.isDone()).toList());
+            // while (tasks.stream().anyMatch(task -> task.isDone() == false))
 
+            tasks.stream()
+                    .filter(task -> !task.isDone()).forEach(task -> pool.submit(task));
+
+            synchronized (root) {
+                root.waitTask(root);
+            }
             pool.shutdown();
             // wait for pool to dry.
             // yes its a spinlock. a lot of waits in java are impatient.
@@ -167,8 +172,8 @@ public class Main {
             // 1. it took too long
             // 2. something went wrong (spurious wake up
             // http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-            while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
-                ;
+            // while (!pool.awaitTermination(1000, TimeUnit.NANOSECONDS))
+            ;
 
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
@@ -405,26 +410,40 @@ class Task implements Callable<Interval> {
         return this.interval.getEnd();
     }
 
+    public void waitTask(Task task) throws InterruptedException {
+        synchronized (task) {
+            while (!task.isDone()) {
+                task.wait(100);
+            }
+        }
+    }
+
     @Override
     public Interval call() throws InterruptedException {
-        if (base || done)
+        synchronized (this) {
+            if (done) {
+                this.notify();
+                return this.interval;
+            }
+            /*
+             * TODO: Something like this->
+             * while (!left.isDone || !right.isDone){
+             * left.wait();
+             * right.wait();
+             * }
+             * why spin lock? java threads wait for no one. they can wake up early by
+             * themselves
+             */
+            // if (!l_child.isDone() || !r_child.isDone()) {
+            // return interval;
+            // }
+            waitTask(l_child);
+            waitTask(r_child);
+            Main.merge(array, interval.getStart(), interval.getEnd());
+            done = true;
+            this.notify();
             return this.interval;
-        /*
-         * TODO: Something like this->
-         * while (!left.isDone || !right.isDone){
-         * left.wait();
-         * right.wait();
-         * }
-         * why spin lock? java threads wait for no one. they can wake up early by
-         * themselves
-         */
-        if (!l_child.isDone() || !r_child.isDone()) {
-            return interval;
         }
-        Main.merge(array, interval.getStart(), interval.getEnd());
-        done = true;
-
-        return this.interval;
     }
 
     public void setChildren(Task l, Task r) {
