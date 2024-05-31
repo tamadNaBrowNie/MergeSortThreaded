@@ -10,6 +10,8 @@ import java.util.Scanner;
 import java.util.concurrent.*;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 public class Main {
 
@@ -17,18 +19,31 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+        int[] cores = { 0, 1, 2, 3, 4, 5, },
 
-                data = { 8, 27, 24, 31, 16380, (1 << 16) - 1, (1 << 16) + 1, (1 << 23), (1 << 23) - 1 };
+                data = { 1 << 14, (1 << 12) - 2000, (1 << 12) + 3000, (1 << 16) - 1, (1 << 16) + 1, (1 << 17) + 1,
+                        1 << 23 };
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Test mode? 0 is no else yes");
         long startTime = 0, elapsedTime = 0;
-        if (0 == scanner.nextInt()) {
-            demo(rand, scanner);
-            scanner.close();
-            return;
+        while (true) {
+            System.out.print(" test mode [y/n]? ");
+            String a = scanner.nextLine().toLowerCase();
+            switch (a) {
+                case "y":
+                    break;
+
+                case "n":
+
+                    demo(rand, scanner);
+                    scanner.close();
+                    return;
+                default:
+                    continue;
+            }
+            break;
         }
+
         System.out.println("Write where:");
         scanner.nextLine();
         String locale = scanner.nextLine();
@@ -36,7 +51,7 @@ public class Main {
         // Test area
         scanner.close();
         int siz;
-        for (int h = 1; h < 6; h++) {
+        for (int h = 1; h < 3; h++) {
             writer.write("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
@@ -127,10 +142,12 @@ public class Main {
         // handle n > 323767
 
         try {
-            // Slow? yes. Stupid? its not stupid if it works.
-            // Using Executor service basically makes this pull based.
+            // Slow? yes. Why? finding dependencies is O(n log n) which is the same O(n) as
+            // unthreaded
+            // Using Executor service basically makes this push based.
 
             // new Task(new Interval(0, arr.length - 1), arr, tasks);
+            BufferedWriter writer = new BufferedWriter(new FileWriter("exec.txt", true), 8192 << 2);
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
@@ -138,12 +155,11 @@ public class Main {
             List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
                     // using the generated intervals is gucci for powers of 2
                     // can someone pls parallelize tis
-                    ? threaded(arr, generate_intervals(0, arr.length - 1))
+                    ? threaded(arr, generate_intervals(0, arr.length - 1), pool)
                     : threaded(arr);
-            Task root = tasks.get(tasks.size() - 1);
-            System.out.println(System.currentTimeMillis() - start + " n = " + arr.length + " threads = " + threads);
-            // System.out.println(System.currentTimeMillis() -
-            // startTime);tem.currentTimeMillis() - startTime);
+            // Task root = tasks.get(tasks.size() - 1);
+            writer.write("Dep check");
+            writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + " threads = " + threads);
             // it is a pain to parallelize and when i did, it somehow got 5x slower
             // tldr; overhead for getting the dependency takes almost the same amount of
             // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
@@ -153,19 +169,30 @@ public class Main {
             // This spins my head right round...
 
             // while (tasks.stream().anyMatch(task -> task.isDone() == false))
+            // int[] gaps = IntStream.range(1, arr.length).toArray();
+            // for (int gap : gaps) {
+            // tasks.stream()
+            // .filter(task -> (task.getEnd() - task.getStart()) == gap)
+            // .forEach(task -> pool.submit(task));
 
-            tasks.stream()
-                    .filter(task -> !task.isDone()).forEach(task -> pool.submit(task));
-
-            synchronized (root) {
-                root.waitTask(root);
-            }
-            //
+            // }
+            // Spin lock or not, traversal will always have O (n log n)
             start = System.currentTimeMillis();
+            tasks.removeIf(task -> task.isBase());
+            pool.invokeAll(tasks);
+            writer.write(" Exec ");
+            // .stream()
+            // .filter(task -> !task.isDone())
+            // .forEach(task -> pool.submit(task));
+
+            // synchronized (root) {
+            // while (!root.isDone())
+            // root.waitTask(root);
+            // }
+            //
             pool.shutdown();
-            System.out.print("Shutdown ");
-            System.out.println(
-                    System.currentTimeMillis() - start + " n = " + arr.length + " threads = " + threads);
+            writer.write(System.currentTimeMillis() - start + " ms");
+            writer.write('\n');
             // wait for pool to dry.
             // yes its a spinlock. a lot of waits in java are impatient.
             // stability and speed are enemies apparently
@@ -177,11 +204,15 @@ public class Main {
             // 1. it took too long
             // 2. something went wrong (spurious wake up
             // http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-            // while (!pool.awaitTermination(1000, TimeUnit.NANOSECONDS))
-            ;
+            while (!pool.awaitTermination(1000, TimeUnit.MILLISECONDS))
+                ;
+            writer.flush();
+            writer.close();
 
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -192,15 +223,20 @@ public class Main {
         return tasks;
     }
 
-    private static List<Task> threaded(int[] arr, List<Interval> intervals) {
+    private static List<Task> threaded(int[] arr, List<Interval> intervals, ExecutorService pool)
+            throws InterruptedException {
         List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
         // the line below takes 1 second at 2^23
         Collections.reverse(intervals);
         intervals.forEach(i -> tasks.add(new Task(i, arr)));
-        Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
-        // the line below also takes 1 second at 2^23
-        func.accept(tasks);
+        // List<Callable<Task>> tree = new ArrayList<Callable<Task>>();
+        if ((arr.length & -arr.length) == arr.length)
+            Main.getTree(tasks, pool);
+        else
+            Main.mapTree(tasks, pool);
+
         Collections.reverse(tasks);
+
         return tasks;
     }
 
@@ -211,7 +247,7 @@ public class Main {
         return (start < end ? start + end * end : start * start + start + end);
     }
 
-    private static void mapTree(List<Task> tasks) {
+    private static List<Callable<Task>> mapTree(List<Task> tasks, ExecutorService pool) {
 
         HashMap<Task, Task> task_map = new HashMap<Task, Task>();
         // tasks.forEach(task -> System.out.println(task));
@@ -249,26 +285,33 @@ public class Main {
             task.setChildren(r_child, l_child);
 
         }
+        return null;
 
     }
 
-    private static void getTree(List<Task> tasks) {
+    private static void getTree(List<Task> tasks, ExecutorService pool) {
         // Collections.reverse(tasks);
         int left = 1, right = 2;
-        Task l_child, r_child;
-
+        // Task l_child, r_child;
+        // List<Callable<Task>> tree = new ArrayList<Callable<Task>>();
         for (Task t : tasks) {
 
             if (!t.isBase()) {
-                l_child = tasks.get(left);
-                r_child = tasks.get(right);
-                t.setChildren(r_child, l_child);
+                final Task l_child = tasks.get(left), r_child = tasks.get(right);
+                t.setChildren(l_child, r_child);
+                // pool.submit(new Runnable() {
+                // @Override
+                // public void run() {
+                // // TODO Auto-generated method stub
+                // t.setChildren(l_child, r_child);
+                // }
+                // });
             }
             left += 2;
             right += 2;
         }
         // Collections.reverse(tasks);
-
+        // return tree;
     }
 
     /*
@@ -510,28 +553,6 @@ class Task implements Callable<Interval> {
 
 }
 // TODO: Reimplement?
-
-class TreeMaker implements Callable<Task> {
-    private int l, r;
-    Task t;
-    List<Task> tasks;
-
-    TreeMaker(Task t, int left, int right, List<Task> tasks) {
-        this.t = t;
-        this.l = left;
-        this.r = right;
-        this.tasks = tasks;
-    }
-
-    @Override
-    public Task call() throws Exception {
-        if (t.isBase())
-            return t;
-        t.setChildren(tasks.get(l), tasks.get(r));
-        return t;
-    }
-}/*
- */
 
 class MapFinder implements Callable<Task> {
     private Task t;
