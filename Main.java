@@ -227,43 +227,45 @@ public class Main {
                 // 1. it took too long
                 // 2. something went wrong (spurious wake up)
                 // (http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-
-                while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
+                // Extra note: we do not know what tle is on different machines ergo spinlock
+                while (!pool.awaitTermination(0, TimeUnit.MILLISECONDS))
                     ;
+                // None spin lock will be:
+                // if(!pool.awaitTermination(TLE, TimeUnit.MILLISECONDS)){
+                // System.err("Pool TLE/Spurious wake up");}
+                // }
+                // it is a pain to parallelize and when i did, it somehow got 5x slower
+                // tldr; overhead for getting the dependency takes almost the same amount of
+                // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
+                // probably distribute it myself but too late)
+                // This is more true for non powers of 2 ergo adding the old recursive code
 
+                // This spins my head right round...
+
+                // while (tasks.stream().anyMatch(task -> task.isDone() == false))
+                // int[] gaps = IntStream.range(1, arr.length).toArray();
+                // for (int gap : gaps) {
+                // tasks.stream()
+                // .filter(task -> (task.getEnd() - task.getStart()) == gap)
+                // .forEach(task -> pool.submit(task));
+
+                // }
+                // Spin lock or not, traversal will always have O (n log n)
+
+                // .stream()
+                // .filter(task -> !task.isDone())
+                // .forEach(task -> pool.submit(task));
+
+                // synchronized (root) {
+                // while (!root.isDone())
+                // root.waitTask(root);
+                // }
+                //
+                // writer.write('\n');
+
+                // writer.flush();
+                // writer.close();
             }
-            // it is a pain to parallelize and when i did, it somehow got 5x slower
-            // tldr; overhead for getting the dependency takes almost the same amount of
-            // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
-            // probably distribute it myself but too late)
-            // This is more true for non powers of 2 ergo adding the old recursive code
-
-            // This spins my head right round...
-
-            // while (tasks.stream().anyMatch(task -> task.isDone() == false))
-            // int[] gaps = IntStream.range(1, arr.length).toArray();
-            // for (int gap : gaps) {
-            // tasks.stream()
-            // .filter(task -> (task.getEnd() - task.getStart()) == gap)
-            // .forEach(task -> pool.submit(task));
-
-            // }
-            // Spin lock or not, traversal will always have O (n log n)
-
-            // .stream()
-            // .filter(task -> !task.isDone())
-            // .forEach(task -> pool.submit(task));
-
-            // synchronized (root) {
-            // while (!root.isDone())
-            // root.waitTask(root);
-            // }
-            //
-            // writer.write('\n');
-
-            // writer.flush();
-            // writer.close();
-
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
@@ -309,7 +311,8 @@ public class Main {
 
         for (Task t : tasks) {
             // WHY IS THIS LOOP SO SLOW?
-            // A:Collisions
+            // A:Collisions and best case is the same speed as merging on the java thread
+            //
             task_map.put(t, t);
             // System.out.println(System.currentTimeMillis() - startTime);
         }
@@ -516,7 +519,7 @@ class Task implements Runnable {
         synchronized (task) {
             // spin locks are the easiest ways to beat spurious wake ups
             while (!task.isDone()) {
-                task.wait(10);
+                task.wait();
             }
         }
     }
