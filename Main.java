@@ -9,9 +9,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.IntStream;
+// import java.util.function.Consumer;
+// import java.util.function.Function;
+// import java.util.stream.IntStream;
 
 public class Main {
 
@@ -19,9 +19,9 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 4, 6, 8, 10 },
+        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
-                data = { 1 << 14, (1 << 12) - 2000, (1 << 12) + 3000, (1 << 16) - 1, (1 << 16) + 1, (1 << 17) + 1,
+                data = { 8, 16, 2, 4, 1 << 14, (1 << 16) - 1, (1 << 16) + 1, (1 << 17) + 1,
                         1 << 23 };
 
         Scanner scanner = new Scanner(System.in);
@@ -69,7 +69,7 @@ public class Main {
                         // System.out.println(msg);
                     }
                     writer.write("\n Mean:" + (float) avg / 3 + " ms");
-                    writer.flush();
+                    // writer.flush();
                 }
 
             }
@@ -174,7 +174,8 @@ public class Main {
             // Using Executor service basically makes this push based.
 
             // new Task(new Interval(0, arr.length - 1), arr, tasks);
-            BufferedWriter writer = new BufferedWriter(new FileWriter("exec.txt", true), 8192 << 2);
+            // BufferedWriter writer = new BufferedWriter(new FileWriter("exec.txt", true),
+            // 8192 << 2);
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
@@ -188,18 +189,19 @@ public class Main {
                         // :
                         generateTasks(0, arr.length - 1, arr);
                 Task root = tasks.get(tasks.size() - 1);
-                writer.write("Dep check ");
-                writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + " threads = " + threads);
+                // writer.write("Dep check ");
+                // writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + "
+                // threads = " + threads);
                 start = System.currentTimeMillis();
                 tasks.removeIf(task -> task.isBase());
                 tasks.forEach(t -> pool.execute(t));
-                writer.write(" Exec ");
+                // writer.write(" Exec ");
 
-                writer.write(System.currentTimeMillis() - start + " ms");
+                // writer.write(System.currentTimeMillis() - start + " ms");
                 root.waitTask(root);
                 pool.shutdownNow();
             } else {
-                boolean hack = false;
+                boolean hack = true;
                 // if we want to be honest
                 if (hack)
                     generate_intervals(0, arr.length - 1).forEach(t -> pool.submit(new Runnable() {
@@ -225,47 +227,47 @@ public class Main {
                 // 1. it took too long
                 // 2. something went wrong (spurious wake up)
                 // (http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-
-                while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
+                // Extra note: we do not know what tle is on different machines ergo spinlock
+                while (!pool.awaitTermination(0, TimeUnit.MILLISECONDS))
                     ;
+                // None spin lock will be:
+                // if(!pool.awaitTermination(TLE, TimeUnit.MILLISECONDS)){
+                // System.err("Pool TLE/Spurious wake up");}
+                // }
+                // it is a pain to parallelize and when i did, it somehow got 5x slower
+                // tldr; overhead for getting the dependency takes almost the same amount of
+                // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
+                // probably distribute it myself but too late)
+                // This is more true for non powers of 2 ergo adding the old recursive code
 
+                // This spins my head right round...
+
+                // while (tasks.stream().anyMatch(task -> task.isDone() == false))
+                // int[] gaps = IntStream.range(1, arr.length).toArray();
+                // for (int gap : gaps) {
+                // tasks.stream()
+                // .filter(task -> (task.getEnd() - task.getStart()) == gap)
+                // .forEach(task -> pool.submit(task));
+
+                // }
+                // Spin lock or not, traversal will always have O (n log n)
+
+                // .stream()
+                // .filter(task -> !task.isDone())
+                // .forEach(task -> pool.submit(task));
+
+                // synchronized (root) {
+                // while (!root.isDone())
+                // root.waitTask(root);
+                // }
+                //
+                // writer.write('\n');
+
+                // writer.flush();
+                // writer.close();
             }
-            // it is a pain to parallelize and when i did, it somehow got 5x slower
-            // tldr; overhead for getting the dependency takes almost the same amount of
-            // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
-            // probably distribute it myself but too late)
-            // This is more true for non powers of 2 ergo adding the old recursive code
-
-            // This spins my head right round...
-
-            // while (tasks.stream().anyMatch(task -> task.isDone() == false))
-            // int[] gaps = IntStream.range(1, arr.length).toArray();
-            // for (int gap : gaps) {
-            // tasks.stream()
-            // .filter(task -> (task.getEnd() - task.getStart()) == gap)
-            // .forEach(task -> pool.submit(task));
-
-            // }
-            // Spin lock or not, traversal will always have O (n log n)
-
-            // .stream()
-            // .filter(task -> !task.isDone())
-            // .forEach(task -> pool.submit(task));
-
-            // synchronized (root) {
-            // while (!root.isDone())
-            // root.waitTask(root);
-            // }
-            //
-            writer.write('\n');
-
-            writer.flush();
-            writer.close();
-
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
@@ -309,7 +311,8 @@ public class Main {
 
         for (Task t : tasks) {
             // WHY IS THIS LOOP SO SLOW?
-            // A:Collisions
+            // A:Collisions and best case is the same speed as merging on the java thread
+            //
             task_map.put(t, t);
             // System.out.println(System.currentTimeMillis() - startTime);
         }
@@ -516,7 +519,7 @@ class Task implements Runnable {
         synchronized (task) {
             // spin locks are the easiest ways to beat spurious wake ups
             while (!task.isDone()) {
-                task.wait(10);
+                task.wait();
             }
         }
     }

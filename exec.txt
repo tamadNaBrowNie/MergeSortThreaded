@@ -1443,3 +1443,716 @@ Dep check 1138 ms n = 8388608 threads = 1024 Exec 1110 ms
 Dep check 1099 ms n = 8388608 threads = 1024 Exec 1677 ms
 Dep check 1016 ms n = 8388608 threads = 1024 Exec 1127 ms
 
+
+
+
+Dep check 2 ms n = 16384 threads = 2 Exec 16 ms
+Dep check 0 ms n = 16384 threads = 2 Exec 15 ms
+Dep check 0 ms n = 16384 threads = 2 Exec 0 ms
+Dep check 0 ms n = 16384 threads = 4 Exec 0 ms
+Dep check 2 ms n = 16384 threads = 4 Exec 0 ms
+Dep check 0 ms n = 16384 threads = 4 Exec 0 ms
+Dep check 0 ms n = 16384 threads = 16 Exec 0 ms
+Dep check 0 ms n = 16384 threads = 16 Exec 5 ms
+Dep check 1 ms n = 16384 threads = 16 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 64 Exec 9 ms
+Dep check 0 ms n = 16384 threads = 64 Exec 12 ms
+Dep check 2 ms n = 16384 threads = 64 Exec 8 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 16 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 15 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 15 ms
+Dep check 0 ms n = 16384 threads = 1024 Exec 70 ms
+Dep check 17 ms n = 16384 threads = 1024 Exec 83 ms
+Dep check 1 ms n = 16384 threads = 1024 Exec 106 ms
+
+
+
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 14 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 16 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 16 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 50 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 85 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 92 ms
+
+
+
+Dep check 0 ms n = 7096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 16 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 64 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 64 Exec 0 ms
+Dep check 0 ms n = 7096 threads = 64 Exec 2 ms
+Dep check 0 ms n = 7096 threads = 256 Exec 18 ms
+Dep check 0 ms n = 7096 threads = 256 Exec 18 ms
+Dep check 0 ms n = 7096 threads = 256 Exec 20 ms
+Dep check 0 ms n = 7096 threads = 1024 Exec 63 ms
+Dep check 0 ms n = 7096 threads = 1024 Exec 92 ms
+Dep check 0 ms n = 7096 threads = 1024 Exec 86 ms
+
+
+
+Dep check 0 ms n = 65535 threads = 2 Exec 16 ms
+Dep check 0 ms n = 65535 threads = 2 Exec 0 ms
+Dep check 17 ms n = 65535 threads = 2 Exec 7 ms
+Dep check 0 ms n = 65535 threads = 4 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 4 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 4 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 16 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 16 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 16 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 64 Exec 0 ms
+Dep check 3 ms n = 65535 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65535 threads = 64 Exec 9 ms
+Dep check 2 ms n = 65535 threads = 256 Exec 18 ms
+Dep check 3 ms n = 65535 threads = 256 Exec 19 ms
+Dep check 3 ms n = 65535 threads = 256 Exec 23 ms
+Dep check 3 ms n = 65535 threads = 1024 Exec 60 ms
+Dep check 3 ms n = 65535 threads = 1024 Exec 85 ms
+Dep check 3 ms n = 65535 threads = 1024 Exec 85 ms
+
+
+
+Dep check 2 ms n = 65537 threads = 2 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 2 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 2 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 1 ms
+Dep check 0 ms n = 65537 threads = 16 Exec 0 ms
+Dep check 3 ms n = 65537 threads = 16 Exec 6 ms
+Dep check 0 ms n = 65537 threads = 16 Exec 0 ms
+Dep check 0 ms n = 65537 threads = 64 Exec 0 ms
+Dep check 0 ms n = 65537 threads = 64 Exec 12 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 18 ms
+Dep check 5 ms n = 65537 threads = 256 Exec 18 ms
+Dep check 3 ms n = 65537 threads = 256 Exec 23 ms
+Dep check 3 ms n = 65537 threads = 1024 Exec 58 ms
+Dep check 3 ms n = 65537 threads = 1024 Exec 84 ms
+Dep check 2 ms n = 65537 threads = 1024 Exec 83 ms
+
+
+
+Dep check 6 ms n = 131073 threads = 2 Exec 22 ms
+Dep check 6 ms n = 131073 threads = 2 Exec 13 ms
+Dep check 13 ms n = 131073 threads = 2 Exec 16 ms
+Dep check 12 ms n = 131073 threads = 4 Exec 1 ms
+Dep check 0 ms n = 131073 threads = 4 Exec 16 ms
+Dep check 0 ms n = 131073 threads = 4 Exec 16 ms
+Dep check 0 ms n = 131073 threads = 16 Exec 16 ms
+Dep check 0 ms n = 131073 threads = 16 Exec 16 ms
+Dep check 0 ms n = 131073 threads = 16 Exec 62 ms
+Dep check 12 ms n = 131073 threads = 64 Exec 24 ms
+Dep check 7 ms n = 131073 threads = 64 Exec 14 ms
+Dep check 23 ms n = 131073 threads = 64 Exec 16 ms
+Dep check 28 ms n = 131073 threads = 256 Exec 29 ms
+Dep check 12 ms n = 131073 threads = 256 Exec 39 ms
+Dep check 13 ms n = 131073 threads = 256 Exec 25 ms
+Dep check 11 ms n = 131073 threads = 1024 Exec 65 ms
+Dep check 9 ms n = 131073 threads = 1024 Exec 68 ms
+Dep check 0 ms n = 131073 threads = 1024 Exec 94 ms
+
+
+
+Dep check 1252 ms n = 8388608 threads = 2 Exec 1596 ms
+Dep check 1091 ms n = 8388608 threads = 2 Exec 1328 ms
+Dep check 5995 ms n = 8388608 threads = 2 Exec 1395 ms
+Dep check 923 ms n = 8388608 threads = 4 Exec 1313 ms
+Dep check 1225 ms n = 8388608 threads = 4 Exec 1047 ms
+Dep check 1403 ms n = 8388608 threads = 4 Exec 1236 ms
+Dep check 1202 ms n = 8388608 threads = 16 Exec 1184 ms
+Dep check 1072 ms n = 8388608 threads = 16 Exec 1594 ms
+Dep check 984 ms n = 8388608 threads = 16 Exec 1125 ms
+Dep check 1032 ms n = 8388608 threads = 64 Exec 1137 ms
+Dep check 1247 ms n = 8388608 threads = 64 Exec 1338 ms
+
+
+
+Dep check 7 ms n = 16384 threads = 2 Exec 6 ms
+Dep check 5 ms n = 16384 threads = 2 Exec 4 ms
+Dep check 1 ms n = 16384 threads = 2 Exec 4 ms
+Dep check 2 ms n = 16384 threads = 4 Exec 4 ms
+Dep check 1 ms n = 16384 threads = 4 Exec 5 ms
+Dep check 2 ms n = 16384 threads = 4 Exec 8 ms
+Dep check 1 ms n = 16384 threads = 16 Exec 6 ms
+Dep check 1 ms n = 16384 threads = 16 Exec 4 ms
+Dep check 4 ms n = 16384 threads = 16 Exec 4 ms
+Dep check 2 ms n = 16384 threads = 64 Exec 9 ms
+Dep check 3 ms n = 16384 threads = 64 Exec 7 ms
+Dep check 2 ms n = 16384 threads = 64 Exec 10 ms
+Dep check 1 ms n = 16384 threads = 256 Exec 18 ms
+Dep check 1 ms n = 16384 threads = 256 Exec 19 ms
+Dep check 5 ms n = 16384 threads = 256 Exec 18 ms
+Dep check 1 ms n = 16384 threads = 1024 Exec 71 ms
+Dep check 1 ms n = 16384 threads = 1024 Exec 107 ms
+Dep check 1 ms n = 16384 threads = 1024 Exec 116 ms
+
+
+
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 2 Exec 1 ms
+Dep check 1 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 3 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 5 ms
+Dep check 1 ms n = 2096 threads = 64 Exec 4 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 15 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 19 ms
+Dep check 1 ms n = 2096 threads = 256 Exec 21 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 65 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 90 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 90 ms
+
+
+
+Dep check 0 ms n = 7096 threads = 2 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 2 Exec 1 ms
+Dep check 1 ms n = 7096 threads = 2 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 2 ms
+Dep check 1 ms n = 7096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 2 ms
+Dep check 1 ms n = 7096 threads = 64 Exec 4 ms
+Dep check 0 ms n = 7096 threads = 64 Exec 4 ms
+Dep check 1 ms n = 7096 threads = 64 Exec 4 ms
+Dep check 0 ms n = 7096 threads = 256 Exec 14 ms
+Dep check 1 ms n = 7096 threads = 256 Exec 18 ms
+Dep check 1 ms n = 7096 threads = 256 Exec 18 ms
+Dep check 1 ms n = 7096 threads = 1024 Exec 59 ms
+Dep check 0 ms n = 7096 threads = 1024 Exec 80 ms
+Dep check 0 ms n = 7096 threads = 1024 Exec 86 ms
+
+
+
+Dep check 3 ms n = 65535 threads = 2 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 2 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 2 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 4 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 16 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 16 Exec 6 ms
+Dep check 1 ms n = 65535 threads = 16 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65535 threads = 64 Exec 9 ms
+Dep check 2 ms n = 65535 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65535 threads = 256 Exec 18 ms
+Dep check 1 ms n = 65535 threads = 256 Exec 19 ms
+Dep check 3 ms n = 65535 threads = 256 Exec 19 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 61 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 117 ms
+Dep check 3 ms n = 65535 threads = 1024 Exec 131 ms
+
+
+
+Dep check 2 ms n = 65537 threads = 2 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 5 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 16 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 16 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 16 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 9 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 9 ms
+Dep check 1 ms n = 65537 threads = 256 Exec 18 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 23 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 21 ms
+Dep check 3 ms n = 65537 threads = 1024 Exec 62 ms
+Dep check 2 ms n = 65537 threads = 1024 Exec 85 ms
+Dep check 2 ms n = 65537 threads = 1024 Exec 86 ms
+
+
+
+Dep check 7 ms n = 131073 threads = 2 Exec 30 ms
+Dep check 7 ms n = 131073 threads = 2 Exec 13 ms
+Dep check 12 ms n = 131073 threads = 2 Exec 14 ms
+Dep check 12 ms n = 131073 threads = 4 Exec 13 ms
+Dep check 7 ms n = 131073 threads = 4 Exec 13 ms
+Dep check 6 ms n = 131073 threads = 4 Exec 11 ms
+Dep check 7 ms n = 131073 threads = 16 Exec 12 ms
+Dep check 7 ms n = 131073 threads = 16 Exec 12 ms
+Dep check 6 ms n = 131073 threads = 16 Exec 68 ms
+Dep check 12 ms n = 131073 threads = 64 Exec 23 ms
+Dep check 6 ms n = 131073 threads = 64 Exec 14 ms
+Dep check 6 ms n = 131073 threads = 64 Exec 30 ms
+Dep check 6 ms n = 131073 threads = 256 Exec 39 ms
+Dep check 13 ms n = 131073 threads = 256 Exec 23 ms
+Dep check 13 ms n = 131073 threads = 256 Exec 24 ms
+Dep check 13 ms n = 131073 threads = 1024 Exec 68 ms
+Dep check 36 ms n = 131073 threads = 1024 Exec 79 ms
+Dep check 8 ms n = 131073 threads = 1024 Exec 80 ms
+
+
+
+Dep check 1481 ms n = 8388608 threads = 2 Exec 1314 ms
+Dep check 506 ms n = 8388608 threads = 2 Exec 1298 ms
+Dep check 7501 ms n = 8388608 threads = 2 Exec 1600 ms
+Dep check 2188 ms n = 8388608 threads = 4 Exec 1049 ms
+Dep check 1497 ms n = 8388608 threads = 4 Exec 1059 ms
+Dep check 1330 ms n = 8388608 threads = 4 Exec 1066 ms
+Dep check 1027 ms n = 8388608 threads = 16 Exec 1039 ms
+Dep check 1175 ms n = 8388608 threads = 16 Exec 953 ms
+Dep check 1304 ms n = 8388608 threads = 16 Exec 961 ms
+Dep check 1249 ms n = 8388608 threads = 64 Exec 1001 ms
+Dep check 1076 ms n = 8388608 threads = 64 Exec 1149 ms
+Dep check 1159 ms n = 8388608 threads = 64 Exec 1579 ms
+Dep check 1289 ms n = 8388608 threads = 256 Exec 1141 ms
+Dep check 1267 ms n = 8388608 threads = 256 Exec 1708 ms
+Dep check 1157 ms n = 8388608 threads = 256 Exec 1028 ms
+Dep check 1319 ms n = 8388608 threads = 1024 Exec 1340 ms
+Dep check 1110 ms n = 8388608 threads = 1024 Exec 1554 ms
+Dep check 1105 ms n = 8388608 threads = 1024 Exec 1003 ms
+
+
+
+Dep check 0 ms n = 16384 threads = 2 Exec 2 ms
+Dep check 0 ms n = 16384 threads = 2 Exec 2 ms
+Dep check 0 ms n = 16384 threads = 2 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 4 Exec 2 ms
+Dep check 0 ms n = 16384 threads = 4 Exec 2 ms
+Dep check 1 ms n = 16384 threads = 4 Exec 2 ms
+Dep check 0 ms n = 16384 threads = 16 Exec 3 ms
+Dep check 0 ms n = 16384 threads = 16 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 16 Exec 3 ms
+Dep check 1 ms n = 16384 threads = 64 Exec 5 ms
+Dep check 1 ms n = 16384 threads = 64 Exec 6 ms
+Dep check 1 ms n = 16384 threads = 64 Exec 5 ms
+Dep check 1 ms n = 16384 threads = 256 Exec 7 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 15 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 12 ms
+Dep check 0 ms n = 16384 threads = 1024 Exec 56 ms
+Dep check 0 ms n = 16384 threads = 1024 Exec 92 ms
+Dep check 0 ms n = 16384 threads = 1024 Exec 98 ms
+
+
+
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 4 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 3 ms
+Dep check 0 ms n = 2096 threads = 64 Exec 5 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 12 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 18 ms
+Dep check 0 ms n = 2096 threads = 256 Exec 20 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 59 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 92 ms
+Dep check 0 ms n = 2096 threads = 1024 Exec 86 ms
+
+
+
+Dep check 0 ms n = 7096 threads = 2 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 2 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 2 Exec 1 ms
+Dep check 1 ms n = 7096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 4 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 2 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 1 ms
+Dep check 0 ms n = 7096 threads = 16 Exec 2 ms
+Dep check 1 ms n = 7096 threads = 64 Exec 3 ms
+Dep check 0 ms n = 7096 threads = 64 Exec 4 ms
+Dep check 1 ms n = 7096 threads = 64 Exec 4 ms
+Dep check 0 ms n = 7096 threads = 256 Exec 16 ms
+Dep check 1 ms n = 7096 threads = 256 Exec 17 ms
+Dep check 0 ms n = 7096 threads = 256 Exec 18 ms
+Dep check 1 ms n = 7096 threads = 1024 Exec 58 ms
+Dep check 1 ms n = 7096 threads = 1024 Exec 84 ms
+Dep check 0 ms n = 7096 threads = 1024 Exec 85 ms
+
+
+
+Dep check 2 ms n = 65535 threads = 2 Exec 7 ms
+Dep check 0 ms n = 65535 threads = 2 Exec 11 ms
+Dep check 2 ms n = 65535 threads = 2 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 4 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 4 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 4 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 16 Exec 0 ms
+Dep check 2 ms n = 65535 threads = 16 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 16 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 64 Exec 0 ms
+Dep check 0 ms n = 65535 threads = 64 Exec 0 ms
+Dep check 2 ms n = 65535 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65535 threads = 256 Exec 19 ms
+Dep check 2 ms n = 65535 threads = 256 Exec 18 ms
+Dep check 2 ms n = 65535 threads = 256 Exec 22 ms
+Dep check 4 ms n = 65535 threads = 1024 Exec 65 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 89 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 67 ms
+
+
+
+Dep check 2 ms n = 65537 threads = 2 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 5 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 5 ms
+Dep check 4 ms n = 65537 threads = 16 Exec 8 ms
+Dep check 3 ms n = 65537 threads = 16 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 16 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 9 ms
+Dep check 3 ms n = 65537 threads = 64 Exec 11 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 17 ms
+Dep check 5 ms n = 65537 threads = 256 Exec 18 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 19 ms
+Dep check 3 ms n = 65537 threads = 1024 Exec 59 ms
+Dep check 3 ms n = 65537 threads = 1024 Exec 88 ms
+Dep check 3 ms n = 65537 threads = 1024 Exec 88 ms
+
+
+
+Dep check 6 ms n = 131073 threads = 2 Exec 13 ms
+Dep check 5 ms n = 131073 threads = 2 Exec 14 ms
+Dep check 31 ms n = 131073 threads = 2 Exec 24 ms
+Dep check 6 ms n = 131073 threads = 4 Exec 11 ms
+Dep check 6 ms n = 131073 threads = 4 Exec 12 ms
+Dep check 6 ms n = 131073 threads = 4 Exec 11 ms
+Dep check 6 ms n = 131073 threads = 16 Exec 12 ms
+Dep check 6 ms n = 131073 threads = 16 Exec 12 ms
+Dep check 6 ms n = 131073 threads = 16 Exec 12 ms
+Dep check 20 ms n = 131073 threads = 64 Exec 25 ms
+Dep check 7 ms n = 131073 threads = 64 Exec 14 ms
+Dep check 24 ms n = 131073 threads = 64 Exec 22 ms
+Dep check 10 ms n = 131073 threads = 256 Exec 30 ms
+Dep check 5 ms n = 131073 threads = 256 Exec 54 ms
+Dep check 26 ms n = 131073 threads = 256 Exec 41 ms
+Dep check 7 ms n = 131073 threads = 1024 Exec 85 ms
+Dep check 13 ms n = 131073 threads = 1024 Exec 84 ms
+Dep check 36 ms n = 131073 threads = 1024 Exec 70 ms
+
+
+
+Dep check 1353 ms n = 8388608 threads = 2 Exec 1351 ms
+Dep check 1215 ms n = 8388608 threads = 2 Exec 1560 ms
+Dep check 1566 ms n = 8388608 threads = 2 Exec 1334 ms
+Dep check 1171 ms n = 8388608 threads = 4 Exec 1166 ms
+Dep check 1233 ms n = 8388608 threads = 4 Exec 1470 ms
+Dep check 1379 ms n = 8388608 threads = 4 Exec 1161 ms
+
+
+
+Dep check 4 ms n = 8 threads = 2 Exec 2 ms
+Dep check 0 ms n = 8 threads = 2 Exec 0 ms
+Dep check 0 ms n = 8 threads = 2 Exec 1 ms
+Dep check 0 ms n = 8 threads = 4 Exec 1 ms
+Dep check 0 ms n = 8 threads = 4 Exec 0 ms
+Dep check 0 ms n = 8 threads = 4 Exec 0 ms
+Dep check 0 ms n = 8 threads = 8 Exec 0 ms
+Dep check 0 ms n = 8 threads = 8 Exec 0 ms
+Dep check 0 ms n = 8 threads = 8 Exec 0 ms
+Dep check 0 ms n = 8 threads = 16 Exec 3 ms
+Dep check 0 ms n = 8 threads = 16 Exec 0 ms
+Dep check 0 ms n = 8 threads = 16 Exec 0 ms
+Dep check 0 ms n = 8 threads = 32 Exec 0 ms
+Dep check 0 ms n = 8 threads = 32 Exec 0 ms
+Dep check 0 ms n = 8 threads = 32 Exec 0 ms
+Dep check 0 ms n = 8 threads = 64 Exec 0 ms
+Dep check 0 ms n = 8 threads = 64 Exec 0 ms
+Dep check 0 ms n = 8 threads = 64 Exec 1 ms
+Dep check 0 ms n = 8 threads = 128 Exec 0 ms
+Dep check 0 ms n = 8 threads = 128 Exec 0 ms
+Dep check 0 ms n = 8 threads = 128 Exec 0 ms
+Dep check 0 ms n = 8 threads = 256 Exec 0 ms
+Dep check 0 ms n = 8 threads = 256 Exec 0 ms
+Dep check 0 ms n = 8 threads = 256 Exec 0 ms
+Dep check 0 ms n = 8 threads = 512 Exec 0 ms
+Dep check 0 ms n = 8 threads = 512 Exec 0 ms
+Dep check 0 ms n = 8 threads = 512 Exec 0 ms
+Dep check 0 ms n = 8 threads = 1024 Exec 4 ms
+Dep check 0 ms n = 8 threads = 1024 Exec 1 ms
+Dep check 0 ms n = 8 threads = 1024 Exec 0 ms
+
+
+
+Dep check 0 ms n = 16 threads = 2 Exec 0 ms
+Dep check 0 ms n = 16 threads = 2 Exec 0 ms
+Dep check 0 ms n = 16 threads = 2 Exec 0 ms
+Dep check 0 ms n = 16 threads = 4 Exec 1 ms
+Dep check 0 ms n = 16 threads = 4 Exec 0 ms
+Dep check 0 ms n = 16 threads = 4 Exec 0 ms
+Dep check 0 ms n = 16 threads = 8 Exec 0 ms
+Dep check 0 ms n = 16 threads = 8 Exec 1 ms
+Dep check 0 ms n = 16 threads = 8 Exec 1 ms
+Dep check 0 ms n = 16 threads = 16 Exec 2 ms
+Dep check 0 ms n = 16 threads = 16 Exec 1 ms
+Dep check 0 ms n = 16 threads = 16 Exec 1 ms
+Dep check 0 ms n = 16 threads = 32 Exec 1 ms
+Dep check 0 ms n = 16 threads = 32 Exec 1 ms
+Dep check 0 ms n = 16 threads = 32 Exec 1 ms
+Dep check 0 ms n = 16 threads = 64 Exec 1 ms
+Dep check 0 ms n = 16 threads = 64 Exec 0 ms
+Dep check 0 ms n = 16 threads = 64 Exec 0 ms
+Dep check 0 ms n = 16 threads = 128 Exec 0 ms
+Dep check 0 ms n = 16 threads = 128 Exec 0 ms
+Dep check 0 ms n = 16 threads = 128 Exec 4 ms
+Dep check 0 ms n = 16 threads = 256 Exec 0 ms
+Dep check 0 ms n = 16 threads = 256 Exec 4 ms
+Dep check 0 ms n = 16 threads = 256 Exec 0 ms
+Dep check 0 ms n = 16 threads = 512 Exec 0 ms
+Dep check 0 ms n = 16 threads = 512 Exec 0 ms
+Dep check 0 ms n = 16 threads = 512 Exec 0 ms
+Dep check 0 ms n = 16 threads = 1024 Exec 4 ms
+Dep check 0 ms n = 16 threads = 1024 Exec 0 ms
+Dep check 0 ms n = 16 threads = 1024 Exec 0 ms
+
+
+
+Dep check 0 ms n = 2 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2 threads = 2 Exec 0 ms
+Dep check 0 ms n = 2 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2 threads = 4 Exec 0 ms
+Dep check 0 ms n = 2 threads = 8 Exec 0 ms
+Dep check 0 ms n = 2 threads = 8 Exec 0 ms
+Dep check 0 ms n = 2 threads = 8 Exec 0 ms
+Dep check 0 ms n = 2 threads = 16 Exec 0 ms
+Dep check 0 ms n = 2 threads = 16 Exec 0 ms
+Dep check 0 ms n = 2 threads = 16 Exec 0 ms
+Dep check 0 ms n = 2 threads = 32 Exec 0 ms
+Dep check 0 ms n = 2 threads = 32 Exec 0 ms
+Dep check 0 ms n = 2 threads = 32 Exec 0 ms
+Dep check 0 ms n = 2 threads = 64 Exec 0 ms
+Dep check 0 ms n = 2 threads = 64 Exec 0 ms
+Dep check 0 ms n = 2 threads = 64 Exec 0 ms
+Dep check 0 ms n = 2 threads = 128 Exec 0 ms
+Dep check 0 ms n = 2 threads = 128 Exec 0 ms
+Dep check 0 ms n = 2 threads = 128 Exec 0 ms
+Dep check 0 ms n = 2 threads = 256 Exec 0 ms
+Dep check 0 ms n = 2 threads = 256 Exec 0 ms
+Dep check 0 ms n = 2 threads = 256 Exec 0 ms
+Dep check 0 ms n = 2 threads = 512 Exec 0 ms
+Dep check 0 ms n = 2 threads = 512 Exec 0 ms
+Dep check 0 ms n = 2 threads = 512 Exec 0 ms
+Dep check 0 ms n = 2 threads = 1024 Exec 0 ms
+Dep check 0 ms n = 2 threads = 1024 Exec 0 ms
+Dep check 0 ms n = 2 threads = 1024 Exec 0 ms
+
+
+
+Dep check 0 ms n = 4 threads = 2 Exec 0 ms
+Dep check 0 ms n = 4 threads = 2 Exec 0 ms
+Dep check 0 ms n = 4 threads = 2 Exec 0 ms
+Dep check 0 ms n = 4 threads = 4 Exec 0 ms
+Dep check 0 ms n = 4 threads = 4 Exec 0 ms
+Dep check 0 ms n = 4 threads = 4 Exec 4 ms
+Dep check 0 ms n = 4 threads = 8 Exec 0 ms
+Dep check 0 ms n = 4 threads = 8 Exec 0 ms
+Dep check 0 ms n = 4 threads = 8 Exec 0 ms
+Dep check 0 ms n = 4 threads = 16 Exec 0 ms
+Dep check 0 ms n = 4 threads = 16 Exec 0 ms
+Dep check 0 ms n = 4 threads = 16 Exec 0 ms
+Dep check 0 ms n = 4 threads = 32 Exec 0 ms
+Dep check 0 ms n = 4 threads = 32 Exec 0 ms
+Dep check 0 ms n = 4 threads = 32 Exec 0 ms
+Dep check 0 ms n = 4 threads = 64 Exec 0 ms
+Dep check 0 ms n = 4 threads = 64 Exec 0 ms
+Dep check 0 ms n = 4 threads = 64 Exec 0 ms
+Dep check 0 ms n = 4 threads = 128 Exec 0 ms
+Dep check 0 ms n = 4 threads = 128 Exec 0 ms
+Dep check 0 ms n = 4 threads = 128 Exec 0 ms
+Dep check 0 ms n = 4 threads = 256 Exec 0 ms
+Dep check 0 ms n = 4 threads = 256 Exec 0 ms
+Dep check 0 ms n = 4 threads = 256 Exec 0 ms
+Dep check 0 ms n = 4 threads = 512 Exec 0 ms
+Dep check 0 ms n = 4 threads = 512 Exec 0 ms
+Dep check 0 ms n = 4 threads = 512 Exec 0 ms
+Dep check 0 ms n = 4 threads = 1024 Exec 0 ms
+Dep check 0 ms n = 4 threads = 1024 Exec 0 ms
+Dep check 0 ms n = 4 threads = 1024 Exec 0 ms
+
+
+
+Dep check 6 ms n = 16384 threads = 2 Exec 4 ms
+Dep check 5 ms n = 16384 threads = 2 Exec 3 ms
+Dep check 2 ms n = 16384 threads = 2 Exec 4 ms
+Dep check 1 ms n = 16384 threads = 4 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 4 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 4 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 8 Exec 8 ms
+Dep check 0 ms n = 16384 threads = 8 Exec 4 ms
+Dep check 0 ms n = 16384 threads = 8 Exec 4 ms
+Dep check 4 ms n = 16384 threads = 16 Exec 3 ms
+Dep check 1 ms n = 16384 threads = 16 Exec 3 ms
+Dep check 2 ms n = 16384 threads = 16 Exec 5 ms
+Dep check 1 ms n = 16384 threads = 32 Exec 8 ms
+Dep check 1 ms n = 16384 threads = 32 Exec 5 ms
+Dep check 1 ms n = 16384 threads = 32 Exec 5 ms
+Dep check 0 ms n = 16384 threads = 64 Exec 6 ms
+Dep check 0 ms n = 16384 threads = 64 Exec 7 ms
+Dep check 1 ms n = 16384 threads = 64 Exec 6 ms
+Dep check 1 ms n = 16384 threads = 128 Exec 9 ms
+Dep check 0 ms n = 16384 threads = 128 Exec 11 ms
+Dep check 2 ms n = 16384 threads = 128 Exec 9 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 16 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 26 ms
+Dep check 0 ms n = 16384 threads = 256 Exec 22 ms
+Dep check 1 ms n = 16384 threads = 512 Exec 33 ms
+Dep check 0 ms n = 16384 threads = 512 Exec 40 ms
+Dep check 2 ms n = 16384 threads = 512 Exec 32 ms
+Dep check 0 ms n = 16384 threads = 1024 Exec 84 ms
+Dep check 0 ms n = 16384 threads = 1024 Exec 96 ms
+Dep check 4 ms n = 16384 threads = 1024 Exec 88 ms
+
+
+
+Dep check 4 ms n = 65535 threads = 2 Exec 4 ms
+Dep check 0 ms n = 65535 threads = 2 Exec 8 ms
+Dep check 0 ms n = 65535 threads = 2 Exec 12 ms
+Dep check 4 ms n = 65535 threads = 4 Exec 7 ms
+Dep check 4 ms n = 65535 threads = 4 Exec 4 ms
+Dep check 4 ms n = 65535 threads = 4 Exec 5 ms
+Dep check 2 ms n = 65535 threads = 8 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 8 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 8 Exec 6 ms
+Dep check 2 ms n = 65535 threads = 16 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 16 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 16 Exec 6 ms
+Dep check 6 ms n = 65535 threads = 32 Exec 9 ms
+Dep check 2 ms n = 65535 threads = 32 Exec 4 ms
+Dep check 4 ms n = 65535 threads = 32 Exec 4 ms
+Dep check 4 ms n = 65535 threads = 64 Exec 8 ms
+Dep check 3 ms n = 65535 threads = 64 Exec 7 ms
+Dep check 2 ms n = 65535 threads = 64 Exec 9 ms
+Dep check 2 ms n = 65535 threads = 128 Exec 11 ms
+Dep check 4 ms n = 65535 threads = 128 Exec 12 ms
+Dep check 4 ms n = 65535 threads = 128 Exec 12 ms
+Dep check 4 ms n = 65535 threads = 256 Exec 16 ms
+Dep check 4 ms n = 65535 threads = 256 Exec 20 ms
+Dep check 3 ms n = 65535 threads = 256 Exec 19 ms
+Dep check 2 ms n = 65535 threads = 512 Exec 33 ms
+Dep check 2 ms n = 65535 threads = 512 Exec 44 ms
+Dep check 3 ms n = 65535 threads = 512 Exec 38 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 68 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 93 ms
+Dep check 2 ms n = 65535 threads = 1024 Exec 83 ms
+
+
+
+Dep check 1 ms n = 65537 threads = 2 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 6 ms
+Dep check 2 ms n = 65537 threads = 2 Exec 9 ms
+Dep check 2 ms n = 65537 threads = 4 Exec 7 ms
+Dep check 1 ms n = 65537 threads = 4 Exec 4 ms
+Dep check 0 ms n = 65537 threads = 4 Exec 8 ms
+Dep check 3 ms n = 65537 threads = 8 Exec 6 ms
+Dep check 0 ms n = 65537 threads = 8 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 8 Exec 7 ms
+Dep check 0 ms n = 65537 threads = 16 Exec 8 ms
+Dep check 0 ms n = 65537 threads = 16 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 16 Exec 7 ms
+Dep check 6 ms n = 65537 threads = 32 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 32 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 32 Exec 7 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 9 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 64 Exec 8 ms
+Dep check 2 ms n = 65537 threads = 128 Exec 12 ms
+Dep check 2 ms n = 65537 threads = 128 Exec 11 ms
+Dep check 2 ms n = 65537 threads = 128 Exec 12 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 18 ms
+Dep check 3 ms n = 65537 threads = 256 Exec 19 ms
+Dep check 2 ms n = 65537 threads = 256 Exec 18 ms
+Dep check 2 ms n = 65537 threads = 512 Exec 34 ms
+Dep check 2 ms n = 65537 threads = 512 Exec 41 ms
+Dep check 3 ms n = 65537 threads = 512 Exec 38 ms
+Dep check 2 ms n = 65537 threads = 1024 Exec 69 ms
+Dep check 8 ms n = 65537 threads = 1024 Exec 76 ms
+Dep check 9 ms n = 65537 threads = 1024 Exec 62 ms
+
+
+
+Dep check 7 ms n = 131073 threads = 2 Exec 16 ms
+Dep check 9 ms n = 131073 threads = 2 Exec 15 ms
+Dep check 8 ms n = 131073 threads = 2 Exec 14 ms
+Dep check 6 ms n = 131073 threads = 4 Exec 12 ms
+Dep check 24 ms n = 131073 threads = 4 Exec 15 ms
+Dep check 12 ms n = 131073 threads = 4 Exec 14 ms
+Dep check 12 ms n = 131073 threads = 8 Exec 13 ms
+Dep check 12 ms n = 131073 threads = 8 Exec 14 ms
+Dep check 11 ms n = 131073 threads = 8 Exec 13 ms
+Dep check 6 ms n = 131073 threads = 16 Exec 13 ms
+Dep check 6 ms n = 131073 threads = 16 Exec 12 ms
+Dep check 7 ms n = 131073 threads = 16 Exec 16 ms
+Dep check 72 ms n = 131073 threads = 32 Exec 21 ms
+Dep check 7 ms n = 131073 threads = 32 Exec 12 ms
+Dep check 25 ms n = 131073 threads = 32 Exec 13 ms
+Dep check 8 ms n = 131073 threads = 64 Exec 16 ms
+Dep check 12 ms n = 131073 threads = 64 Exec 16 ms
+Dep check 13 ms n = 131073 threads = 64 Exec 17 ms
+Dep check 28 ms n = 131073 threads = 128 Exec 25 ms
+Dep check 10 ms n = 131073 threads = 128 Exec 18 ms
+Dep check 7 ms n = 131073 threads = 128 Exec 18 ms
+Dep check 0 ms n = 131073 threads = 256 Exec 32 ms
+Dep check 0 ms n = 131073 threads = 256 Exec 27 ms
+Dep check 16 ms n = 131073 threads = 256 Exec 37 ms
+Dep check 15 ms n = 131073 threads = 512 Exec 49 ms
+Dep check 15 ms n = 131073 threads = 512 Exec 55 ms
+Dep check 16 ms n = 131073 threads = 512 Exec 47 ms
+Dep check 15 ms n = 131073 threads = 1024 Exec 97 ms
+Dep check 29 ms n = 131073 threads = 1024 Exec 67 ms
+Dep check 0 ms n = 131073 threads = 1024 Exec 94 ms
+
+
+
+Dep check 1385 ms n = 8388608 threads = 2 Exec 1366 ms
+Dep check 613 ms n = 8388608 threads = 2 Exec 1229 ms
+Dep check 2450 ms n = 8388608 threads = 2 Exec 1244 ms
+Dep check 595 ms n = 8388608 threads = 4 Exec 2624 ms
+Dep check 1234 ms n = 8388608 threads = 4 Exec 1596 ms
+Dep check 1074 ms n = 8388608 threads = 4 Exec 1334 ms
+Dep check 1063 ms n = 8388608 threads = 8 Exec 1037 ms
+Dep check 850 ms n = 8388608 threads = 8 Exec 1540 ms
+Dep check 1022 ms n = 8388608 threads = 8 Exec 1290 ms
+Dep check 1051 ms n = 8388608 threads = 16 Exec 1353 ms
+Dep check 1247 ms n = 8388608 threads = 16 Exec 1442 ms
+Dep check 1112 ms n = 8388608 threads = 16 Exec 1353 ms
+Dep check 1123 ms n = 8388608 threads = 32 Exec 1325 ms
+Dep check 1000 ms n = 8388608 threads = 32 Exec 1413 ms
+Dep check 1275 ms n = 8388608 threads = 32 Exec 1181 ms
+Dep check 1045 ms n = 8388608 threads = 64 Exec 1052 ms
+Dep check 1382 ms n = 8388608 threads = 64 Exec 1283 ms
+Dep check 986 ms n = 8388608 threads = 64 Exec 1266 ms
+Dep check 1076 ms n = 8388608 threads = 128 Exec 1489 ms
+Dep check 953 ms n = 8388608 threads = 128 Exec 1419 ms
+Dep check 999 ms n = 8388608 threads = 128 Exec 1558 ms
+Dep check 961 ms n = 8388608 threads = 256 Exec 1605 ms
+Dep check 975 ms n = 8388608 threads = 256 Exec 1672 ms
+Dep check 986 ms n = 8388608 threads = 256 Exec 1613 ms
