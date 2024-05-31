@@ -19,7 +19,7 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4, 5, },
+        int[] cores = { 0, 1, 2, 4, 6, 8, 10 },
 
                 data = { 1 << 14, (1 << 12) - 2000, (1 << 12) + 3000, (1 << 16) - 1, (1 << 16) + 1, (1 << 17) + 1,
                         1 << 23 };
@@ -78,6 +78,32 @@ public class Main {
         writer.close();
     }
 
+    private static List<Task> generateTasks(int start, int end, int[] arr) {
+        List<Task> tasks = new ArrayList<>();
+        Task head = new Task(new Interval(start, end), arr);
+        tasks.add(head);
+
+        int i = 0;
+        while (i < tasks.size()) {
+            head = tasks.get(i);
+            int s = head.getStart();
+            int e = head.getEnd();
+            i++;
+
+            if (s == e) {
+                continue;
+            }
+            int m = s + ((e - s) >> 1);
+            Task left = new Task(new Interval(s, m), arr);
+            Task right = new Task(new Interval(m + 1, e), arr);
+            head.setChildren(left, right);
+            tasks.add(left);
+            tasks.add(right);
+        }
+        Collections.reverse(tasks);
+        return tasks;
+    }
+
     private static void demo(Random rand, Scanner scanner) {
         long startTime;
         long elapsedTime;
@@ -89,12 +115,12 @@ public class Main {
             System.out.println("Bad input, try again");
             System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
             n = scanner.nextInt();
-            p = 1 << scanner.nextInt();
+            p = scanner.nextInt();
         }
 
         startTime = System.currentTimeMillis();
         int[] arr = new int[n];
-        doTasks(p, rand, arr);
+        doTasks(1 << p, rand, arr);
 
         elapsedTime = System.currentTimeMillis() - startTime;
         System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
@@ -128,10 +154,11 @@ public class Main {
 
         // System.out.println("Array shuffed");
         // List<Interval> intervals = generate_intervals(0, arr.length - 1);
-        if (threads == 1) {
-            generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-            return;
-        }
+        // if (threads == 1) {
+        // generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(),
+        // c.getEnd()));
+        // return;
+        // }
         // uses generated intervals if n is power of 2 because you can easily rebuild
         // the splitting "tree"
         // performance is comparable to recursive version though
@@ -152,14 +179,57 @@ public class Main {
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
             long start = System.currentTimeMillis();
-            List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
-                    // using the generated intervals is gucci for powers of 2
-                    // can someone pls parallelize tis
-                    ? threaded(arr, generate_intervals(0, arr.length - 1), pool)
-                    : threaded(arr);
-            // Task root = tasks.get(tasks.size() - 1);
-            writer.write("Dep check");
-            writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + " threads = " + threads);
+            if (threads > 1) {
+                List<Task> tasks =
+                        // (arr.length & -arr.length) == arr.length || arr.length < 32768
+                        // // using the generated intervals is gucci for powers of 2
+                        // // can someone pls parallelize tis
+                        // ? threaded(arr, generate_intervals(0, arr.length - 1), pool)
+                        // :
+                        generateTasks(0, arr.length - 1, arr);
+                Task root = tasks.get(tasks.size() - 1);
+                writer.write("Dep check ");
+                writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + " threads = " + threads);
+                start = System.currentTimeMillis();
+                tasks.removeIf(task -> task.isBase());
+                tasks.forEach(t -> pool.execute(t));
+                writer.write(" Exec ");
+
+                writer.write(System.currentTimeMillis() - start + " ms");
+                root.waitTask(root);
+                pool.shutdownNow();
+            } else {
+                boolean hack = false;
+                // if we want to be honest
+                if (hack)
+                    generate_intervals(0, arr.length - 1).forEach(t -> pool.submit(new Runnable() {
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            merge(arr, t.getStart(), t.getEnd());
+                        }
+                    }));
+                else
+                    // this is way faster. my guess is its because we only loop once and there's no
+                    // task queuing overhead
+                    generate_intervals(0, arr.length - 1).forEach(t -> merge(arr, t.getStart(), t.getEnd()));
+
+                pool.shutdown();
+                // wait for pool to dry.
+                // yes its a spinlock. a lot of waits in java are impatient.
+                // stability and speed are enemies apparently
+                // learned this trick from 'ere: https://stackoverflow.com/a/1250655
+                // they mentioned that malarkey happens if its not a spin lock
+                // i have experienced that malarkey both in primes and here
+                // this is also why a lot of examples of notify and wait in java use while loops
+                // its too prevent the thread from getting impatient whether
+                // 1. it took too long
+                // 2. something went wrong (spurious wake up)
+                // (http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
+
+                while (!pool.awaitTermination(0, TimeUnit.NANOSECONDS))
+                    ;
+
+            }
             // it is a pain to parallelize and when i did, it somehow got 5x slower
             // tldr; overhead for getting the dependency takes almost the same amount of
             // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
@@ -177,10 +247,7 @@ public class Main {
 
             // }
             // Spin lock or not, traversal will always have O (n log n)
-            start = System.currentTimeMillis();
-            tasks.removeIf(task -> task.isBase());
-            pool.invokeAll(tasks);
-            writer.write(" Exec ");
+
             // .stream()
             // .filter(task -> !task.isDone())
             // .forEach(task -> pool.submit(task));
@@ -190,22 +257,8 @@ public class Main {
             // root.waitTask(root);
             // }
             //
-            pool.shutdown();
-            writer.write(System.currentTimeMillis() - start + " ms");
             writer.write('\n');
-            // wait for pool to dry.
-            // yes its a spinlock. a lot of waits in java are impatient.
-            // stability and speed are enemies apparently
-            // learned this trick from 'ere: https://stackoverflow.com/a/1250655
-            // they mentioned that malarkey happens if its not a spin lock
-            // i have experienced that malarkey both in primes and here
-            // this is also why a lot of examples of notify and wait in java use while loops
-            // its too prevent the thread from getting impatient whether
-            // 1. it took too long
-            // 2. something went wrong (spurious wake up
-            // http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-            while (!pool.awaitTermination(1000, TimeUnit.MILLISECONDS))
-                ;
+
             writer.flush();
             writer.close();
 
@@ -217,28 +270,29 @@ public class Main {
 
     }
 
-    private static ArrayList<Task> threaded(int[] arr) {
-        ArrayList<Task> tasks = new ArrayList<Task>();
-        new Task(new Interval(0, arr.length - 1), arr, tasks);
-        return tasks;
-    }
+    // private static ArrayList<Task> threaded(int[] arr) {
+    // ArrayList<Task> tasks = new ArrayList<Task>();
+    // new Task(new Interval(0, arr.length - 1), arr, tasks);
+    // return tasks;
+    // }
 
-    private static List<Task> threaded(int[] arr, List<Interval> intervals, ExecutorService pool)
-            throws InterruptedException {
-        List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
-        // the line below takes 1 second at 2^23
-        Collections.reverse(intervals);
-        intervals.forEach(i -> tasks.add(new Task(i, arr)));
-        // List<Callable<Task>> tree = new ArrayList<Callable<Task>>();
-        if ((arr.length & -arr.length) == arr.length)
-            Main.getTree(tasks, pool);
-        else
-            Main.mapTree(tasks, pool);
+    // private static List<Task> threaded(int[] arr, List<Interval> intervals,
+    // ExecutorService pool)
+    // throws InterruptedException {
+    // List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
+    // // the line below takes 1 second at 2^23
+    // Collections.reverse(intervals);
+    // intervals.forEach(i -> tasks.add(new Task(i, arr)));
+    // // List<Callable<Task>> tree = new ArrayList<Callable<Task>>();
+    // if ((arr.length & -arr.length) == arr.length)
+    // Main.getTree(tasks, pool);
+    // else
+    // Main.mapTree(tasks, pool);
 
-        Collections.reverse(tasks);
+    // Collections.reverse(tasks);
 
-        return tasks;
-    }
+    // return tasks;
+    // }
 
     public static int key(int start, int end) {
         // from https://stackoverflow.com/a/13871379
@@ -423,7 +477,7 @@ class Interval {
 }
 
 // Prefer composition over inheritance.
-class Task implements Callable<Interval> {
+class Task implements Runnable {
     private Interval interval;
     private boolean done = false;
     private int[] array;
@@ -460,18 +514,20 @@ class Task implements Callable<Interval> {
 
     public void waitTask(Task task) throws InterruptedException {
         synchronized (task) {
+            // spin locks are the easiest ways to beat spurious wake ups
             while (!task.isDone()) {
-                task.wait(100);
+                task.wait(10);
             }
         }
     }
 
     @Override
-    public Interval call() throws InterruptedException {
+    public void run() {
         synchronized (this) {
             if (done) {
                 this.notify();
-                return this.interval;
+                return;
+                // this.interval;
             }
             /*
              * TODO: Something like this->
@@ -485,12 +541,17 @@ class Task implements Callable<Interval> {
             // if (!l_child.isDone() || !r_child.isDone()) {
             // return interval;
             // }
-            waitTask(l_child);
-            waitTask(r_child);
+            try {
+                waitTask(l_child);
+                waitTask(r_child);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Main.merge(array, interval.getStart(), interval.getEnd());
             done = true;
             this.notify();
-            return this.interval;
+            return;
+            // this.interval;
         }
     }
 

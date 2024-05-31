@@ -1,87 +1,397 @@
 
 
 run1
-Test 1 size = 8  threads= 1 took 0 ms sorted? true
-Test 2 size = 8  threads= 1 took 0 ms sorted? true
-Test 3 size = 8  threads= 1 took 0 ms sorted? true
- Mean:0.0 ms
-Test 1 size = 8  threads= 2 took 24 ms sorted? true
-Test 2 size = 8  threads= 2 took 0 ms sorted? true
-Test 3 size = 8  threads= 2 took 12 ms sorted? true
+Test 1 size = 16384  threads= 1 took 42 ms sorted? true
+Test 2 size = 16384  threads= 1 took 25 ms sorted? true
+Test 3 size = 16384  threads= 1 took 4 ms sorted? true
+ Mean:23.666666 ms
+Test 1 size = 16384  threads= 2 took 16 ms sorted? true
+Test 2 size = 16384  threads= 2 took 31 ms sorted? true
+Test 3 size = 16384  threads= 2 took 0 ms sorted? true
+ Mean:15.666667 ms
+Test 1 size = 16384  threads= 4 took 26 ms sorted? true
+Test 2 size = 16384  threads= 4 took 12 ms sorted? true
+Test 3 size = 16384  threads= 4 took 14 ms sorted? true
+ Mean:17.333334 ms
+Test 1 size = 16384  threads= 16 took 12 ms sorted? true
+Test 2 size = 16384  threads= 16 took 12 ms sorted? true
+Test 3 size = 16384  threads= 16 took 12 ms sorted? true
  Mean:12.0 ms
-Test 1 size = 8  threads= 4 took 8 ms sorted? true
-Test 2 size = 8  threads= 4 took 2 ms sorted? true
-Test 3 size = 8  threads= 4 took 1 ms sorted? true
- Mean:3.6666667 ms
-Test 1 size = 8  threads= 8 took 3 ms sorted? true
-Test 2 size = 8  threads= 8 took 0 ms sorted? true
-Test 3 size = 8  threads= 8 took 0 ms sorted? true
- Mean:1.0 ms
-Test 1 size = 27  threads= 1 took 0 ms sorted? true
-Test 2 size = 27  threads= 1 took 0 ms sorted? true
-Test 3 size = 27  threads= 1 took 0 ms sorted? true
+Test 1 size = 16384  threads= 64 took 16 ms sorted? true
+Test 2 size = 16384  threads= 64 took 16 ms sorted? true
+Test 3 size = 16384  threads= 64 took 16 ms sorted? true
+ Mean:16.0 ms
+Test 1 size = 16384  threads= 256 took 26 ms sorted? true
+Test 2 size = 16384  threads= 256 took 28 ms sorted? true
+Test 3 size = 16384  threads= 256 took 33 ms sorted? true
+ Mean:29.0 ms
+Test 1 size = 16384  threads= 1024 took 80 ms sorted? true
+Test 2 size = 16384  threads= 1024 took 96 ms sorted? true
+Test 3 size = 16384  threads= 1024 took 133 ms sorted? true
+ Mean:103.0 ms
+Test 1 size = 2096  threads= 1 took 16 ms sorted? true
+Test 2 size = 2096  threads= 1 took 0 ms sorted? true
+Test 3 size = 2096  threads= 1 took 0 ms sorted? true
+ Mean:5.3333335 ms
+Test 1 size = 2096  threads= 2 took 0 ms sorted? true
+Test 2 size = 2096  threads= 2 took 0 ms sorted? true
+Test 3 size = 2096  threads= 2 took 0 ms sorted? true
  Mean:0.0 ms
-Test 1 size = 27  threads= 2 took 0 ms sorted? true
-Test 2 size = 27  threads= 2 took 0 ms sorted? true
-Test 3 size = 27  threads= 2 took 0 ms sorted? true
+Test 1 size = 2096  threads= 4 took 0 ms sorted? true
+Test 2 size = 2096  threads= 4 took 0 ms sorted? true
+Test 3 size = 2096  threads= 4 took 16 ms sorted? true
+ Mean:5.3333335 ms
+Test 1 size = 2096  threads= 16 took 0 ms sorted? true
+Test 2 size = 2096  threads= 16 took 0 ms sorted? true
+Test 3 size = 2096  threads= 16 took 0 ms sorted? true
  Mean:0.0 ms
-Test 1 size = 27  threads= 4 took 18 ms sorted? true
-Test 2 size = 27  threads= 4 took 2 ms sorted? true
-Test 3 size = 27  threads= 4 took 2 ms sorted? true
+Test 1 size = 2096  threads= 64 took 15 ms sorted? true
+Test 2 size = 2096  threads= 64 took 0 ms sorted? true
+Test 3 size = 2096  threads= 64 took 0 ms sorted? true
+ Mean:5.0 ms
+Test 1 size = 2096  threads= 256 took 16 ms sorted? true
+Test 2 size = 2096  threads= 256 took 31 ms sorted? true
+Test 3 size = 2096  threads= 256 took 22 ms sorted? true
+ Mean:23.0 ms
+Test 1 size = 2096  threads= 1024 took 74 ms sorted? true
+Test 2 size = 2096  threads= 1024 took 89 ms sorted? true
+Test 3 size = 2096  threads= 1024 took 107 ms sorted? true
+ Mean:90.0 ms
+Test 1 size = 7096  threads= 1 took 15 ms sorted? true
+Test 2 size = 7096  threads= 1 took 0 ms sorted? true
+Test 3 size = 7096  threads= 1 took 16 ms sorted? true
+ Mean:10.333333 ms
+Test 1 size = 7096  threads= 2 took 6 ms sorted? true
+Test 2 size = 7096  threads= 2 took 4 ms sorted? true
+Test 3 size = 7096  threads= 2 took 3 ms sorted? true
+ Mean:4.3333335 ms
+Test 1 size = 7096  threads= 4 took 4 ms sorted? true
+Test 2 size = 7096  threads= 4 took 4 ms sorted? true
+Test 3 size = 7096  threads= 4 took 4 ms sorted? true
+ Mean:4.0 ms
+Test 1 size = 7096  threads= 16 took 5 ms sorted? true
+Test 2 size = 7096  threads= 16 took 4 ms sorted? true
+Test 3 size = 7096  threads= 16 took 5 ms sorted? true
+ Mean:4.6666665 ms
+Test 1 size = 7096  threads= 64 took 7 ms sorted? true
+Test 2 size = 7096  threads= 64 took 7 ms sorted? true
+Test 3 size = 7096  threads= 64 took 8 ms sorted? true
  Mean:7.3333335 ms
-Test 1 size = 27  threads= 8 took 3 ms sorted? true
-Test 2 size = 27  threads= 8 took 2 ms sorted? true
-Test 3 size = 27  threads= 8 took 3 ms sorted? true
+Test 1 size = 7096  threads= 256 took 18 ms sorted? true
+Test 2 size = 7096  threads= 256 took 17 ms sorted? true
+Test 3 size = 7096  threads= 256 took 22 ms sorted? true
+ Mean:19.0 ms
+Test 1 size = 7096  threads= 1024 took 62 ms sorted? true
+Test 2 size = 7096  threads= 1024 took 93 ms sorted? true
+Test 3 size = 7096  threads= 1024 took 89 ms sorted? true
+ Mean:81.333336 ms
+Test 1 size = 65535  threads= 1 took 49 ms sorted? true
+Test 2 size = 65535  threads= 1 took 50 ms sorted? true
+Test 3 size = 65535  threads= 1 took 34 ms sorted? true
+ Mean:44.333332 ms
+Test 1 size = 65535  threads= 2 took 42 ms sorted? true
+Test 2 size = 65535  threads= 2 took 24 ms sorted? true
+Test 3 size = 65535  threads= 2 took 19 ms sorted? true
+ Mean:28.333334 ms
+Test 1 size = 65535  threads= 4 took 34 ms sorted? true
+Test 2 size = 65535  threads= 4 took 27 ms sorted? true
+Test 3 size = 65535  threads= 4 took 25 ms sorted? true
+ Mean:28.666666 ms
+Test 1 size = 65535  threads= 16 took 27 ms sorted? true
+Test 2 size = 65535  threads= 16 took 26 ms sorted? true
+Test 3 size = 65535  threads= 16 took 25 ms sorted? true
+ Mean:26.0 ms
+Test 1 size = 65535  threads= 64 took 29 ms sorted? true
+Test 2 size = 65535  threads= 64 took 31 ms sorted? true
+Test 3 size = 65535  threads= 64 took 30 ms sorted? true
+ Mean:30.0 ms
+Test 1 size = 65535  threads= 256 took 37 ms sorted? true
+Test 2 size = 65535  threads= 256 took 39 ms sorted? true
+Test 3 size = 65535  threads= 256 took 39 ms sorted? true
+ Mean:38.333332 ms
+Test 1 size = 65535  threads= 1024 took 79 ms sorted? true
+Test 2 size = 65535  threads= 1024 took 111 ms sorted? true
+Test 3 size = 65535  threads= 1024 took 105 ms sorted? true
+ Mean:98.333336 ms
+Test 1 size = 65537  threads= 1 took 52 ms sorted? true
+Test 2 size = 65537  threads= 1 took 51 ms sorted? true
+Test 3 size = 65537  threads= 1 took 33 ms sorted? true
+ Mean:45.333332 ms
+Test 1 size = 65537  threads= 2 took 16 ms sorted? true
+Test 2 size = 65537  threads= 2 took 33 ms sorted? true
+Test 3 size = 65537  threads= 2 took 15 ms sorted? true
+ Mean:21.333334 ms
+Test 1 size = 65537  threads= 4 took 36 ms sorted? true
+Test 2 size = 65537  threads= 4 took 27 ms sorted? true
+Test 3 size = 65537  threads= 4 took 24 ms sorted? true
+ Mean:29.0 ms
+Test 1 size = 65537  threads= 16 took 25 ms sorted? true
+Test 2 size = 65537  threads= 16 took 24 ms sorted? true
+Test 3 size = 65537  threads= 16 took 25 ms sorted? true
+ Mean:24.666666 ms
+Test 1 size = 65537  threads= 64 took 26 ms sorted? true
+Test 2 size = 65537  threads= 64 took 27 ms sorted? true
+Test 3 size = 65537  threads= 64 took 27 ms sorted? true
+ Mean:26.666666 ms
+Test 1 size = 65537  threads= 256 took 38 ms sorted? true
+Test 2 size = 65537  threads= 256 took 40 ms sorted? true
+Test 3 size = 65537  threads= 256 took 39 ms sorted? true
+ Mean:39.0 ms
+Test 1 size = 65537  threads= 1024 took 85 ms sorted? true
+Test 2 size = 65537  threads= 1024 took 104 ms sorted? true
+Test 3 size = 65537  threads= 1024 took 102 ms sorted? true
+ Mean:97.0 ms
+Test 1 size = 131073  threads= 1 took 80 ms sorted? true
+Test 2 size = 131073  threads= 1 took 84 ms sorted? true
+Test 3 size = 131073  threads= 1 took 70 ms sorted? true
+ Mean:78.0 ms
+Test 1 size = 131073  threads= 2 took 53 ms sorted? true
+Test 2 size = 131073  threads= 2 took 49 ms sorted? true
+Test 3 size = 131073  threads= 2 took 66 ms sorted? true
+ Mean:56.0 ms
+Test 1 size = 131073  threads= 4 took 58 ms sorted? true
+Test 2 size = 131073  threads= 4 took 81 ms sorted? true
+Test 3 size = 131073  threads= 4 took 54 ms sorted? true
+ Mean:64.333336 ms
+Test 1 size = 131073  threads= 16 took 52 ms sorted? true
+Test 2 size = 131073  threads= 16 took 84 ms sorted? true
+Test 3 size = 131073  threads= 16 took 61 ms sorted? true
+ Mean:65.666664 ms
+Test 1 size = 131073  threads= 64 took 61 ms sorted? true
+Test 2 size = 131073  threads= 64 took 63 ms sorted? true
+Test 3 size = 131073  threads= 64 took 62 ms sorted? true
+ Mean:62.0 ms
+Test 1 size = 131073  threads= 256 took 109 ms sorted? true
+Test 2 size = 131073  threads= 256 took 96 ms sorted? true
+Test 3 size = 131073  threads= 256 took 91 ms sorted? true
+ Mean:98.666664 ms
+Test 1 size = 131073  threads= 1024 took 125 ms sorted? true
+Test 2 size = 131073  threads= 1024 took 138 ms sorted? true
+Test 3 size = 131073  threads= 1024 took 151 ms sorted? true
+ Mean:138.0 ms
+Test 1 size = 8388608  threads= 1 took 11035 ms sorted? true
+Test 2 size = 8388608  threads= 1 took 10767 ms sorted? true
+Test 3 size = 8388608  threads= 1 took 9590 ms sorted? true
+ Mean:10464.0 ms
+Test 1 size = 8388608  threads= 2 took 5857 ms sorted? true
+Test 2 size = 8388608  threads= 2 took 4357 ms sorted? true
+Test 3 size = 8388608  threads= 2 took 5239 ms sorted? true
+ Mean:5151.0 ms
+Test 1 size = 8388608  threads= 4 took 5153 ms sorted? true
+Test 2 size = 8388608  threads= 4 took 5049 ms sorted? true
+Test 3 size = 8388608  threads= 4 took 5445 ms sorted? true
+ Mean:5215.6665 ms
+Test 1 size = 8388608  threads= 16 took 5190 ms sorted? true
+Test 2 size = 8388608  threads= 16 took 5023 ms sorted? true
+Test 3 size = 8388608  threads= 16 took 5184 ms sorted? true
+ Mean:5132.3335 ms
+Test 1 size = 8388608  threads= 64 took 5122 ms sorted? true
+Test 2 size = 8388608  threads= 64 took 5050 ms sorted? true
+Test 3 size = 8388608  threads= 64 took 4938 ms sorted? true
+ Mean:5036.6665 ms
+Test 1 size = 8388608  threads= 256 took 4957 ms sorted? true
+Test 2 size = 8388608  threads= 256 took 5129 ms sorted? true
+Test 3 size = 8388608  threads= 256 took 4861 ms sorted? true
+ Mean:4982.3335 ms
+Test 1 size = 8388608  threads= 1024 took 5157 ms sorted? true
+Test 2 size = 8388608  threads= 1024 took 5567 ms sorted? true
+Test 3 size = 8388608  threads= 1024 took 4806 ms sorted? true
+ Mean:5176.6665 ms
+
+run2
+Test 1 size = 16384  threads= 1 took 19 ms sorted? true
+Test 2 size = 16384  threads= 1 took 28 ms sorted? true
+Test 3 size = 16384  threads= 1 took 10 ms sorted? true
+ Mean:19.0 ms
+Test 1 size = 16384  threads= 2 took 0 ms sorted? true
+Test 2 size = 16384  threads= 2 took 0 ms sorted? true
+Test 3 size = 16384  threads= 2 took 21 ms sorted? true
+ Mean:7.0 ms
+Test 1 size = 16384  threads= 4 took 7 ms sorted? true
+Test 2 size = 16384  threads= 4 took 6 ms sorted? true
+Test 3 size = 16384  threads= 4 took 7 ms sorted? true
+ Mean:6.6666665 ms
+Test 1 size = 16384  threads= 16 took 8 ms sorted? true
+Test 2 size = 16384  threads= 16 took 7 ms sorted? true
+Test 3 size = 16384  threads= 16 took 7 ms sorted? true
+ Mean:7.3333335 ms
+Test 1 size = 16384  threads= 64 took 10 ms sorted? true
+Test 2 size = 16384  threads= 64 took 10 ms sorted? true
+Test 3 size = 16384  threads= 64 took 11 ms sorted? true
+ Mean:10.333333 ms
+Test 1 size = 16384  threads= 256 took 20 ms sorted? true
+Test 2 size = 16384  threads= 256 took 23 ms sorted? true
+Test 3 size = 16384  threads= 256 took 25 ms sorted? true
+ Mean:22.666666 ms
+Test 1 size = 16384  threads= 1024 took 65 ms sorted? true
+Test 2 size = 16384  threads= 1024 took 101 ms sorted? true
+Test 3 size = 16384  threads= 1024 took 92 ms sorted? true
+ Mean:86.0 ms
+Test 1 size = 2096  threads= 1 took 8 ms sorted? true
+Test 2 size = 2096  threads= 1 took 12 ms sorted? true
+Test 3 size = 2096  threads= 1 took 9 ms sorted? true
+ Mean:9.666667 ms
+Test 1 size = 2096  threads= 2 took 0 ms sorted? true
+Test 2 size = 2096  threads= 2 took 0 ms sorted? true
+Test 3 size = 2096  threads= 2 took 0 ms sorted? true
+ Mean:0.0 ms
+Test 1 size = 2096  threads= 4 took 6 ms sorted? true
+Test 2 size = 2096  threads= 4 took 2 ms sorted? true
+Test 3 size = 2096  threads= 4 took 1 ms sorted? true
+ Mean:3.0 ms
+Test 1 size = 2096  threads= 16 took 4 ms sorted? true
+Test 2 size = 2096  threads= 16 took 2 ms sorted? true
+Test 3 size = 2096  threads= 16 took 2 ms sorted? true
  Mean:2.6666667 ms
-Test 1 size = 24  threads= 1 took 0 ms sorted? true
-Test 2 size = 24  threads= 1 took 0 ms sorted? true
-Test 3 size = 24  threads= 1 took 0 ms sorted? true
- Mean:0.0 ms
-Test 1 size = 24  threads= 2 took 0 ms sorted? true
-Test 2 size = 24  threads= 2 took 0 ms sorted? true
-Test 3 size = 24  threads= 2 took 4 ms sorted? true
- Mean:1.3333334 ms
-Test 1 size = 24  threads= 4 took 2 ms sorted? true
-Test 2 size = 24  threads= 4 took 2 ms sorted? true
-Test 3 size = 24  threads= 4 took 1 ms sorted? true
- Mean:1.6666666 ms
-Test 1 size = 24  threads= 8 took 3 ms sorted? true
-Test 2 size = 24  threads= 8 took 2 ms sorted? true
-Test 3 size = 24  threads= 8 took 2 ms sorted? true
- Mean:2.3333333 ms
-Test 1 size = 31  threads= 1 took 0 ms sorted? true
-Test 2 size = 31  threads= 1 took 0 ms sorted? true
-Test 3 size = 31  threads= 1 took 0 ms sorted? true
- Mean:0.0 ms
-Test 1 size = 31  threads= 2 took 0 ms sorted? true
-Test 2 size = 31  threads= 2 took 0 ms sorted? true
-Test 3 size = 31  threads= 2 took 0 ms sorted? true
- Mean:0.0 ms
-Test 1 size = 31  threads= 4 took 6 ms sorted? true
-Test 2 size = 31  threads= 4 took 2 ms sorted? true
-Test 3 size = 31  threads= 4 took 2 ms sorted? true
- Mean:3.3333333 ms
-Test 1 size = 31  threads= 8 took 4 ms sorted? true
-Test 2 size = 31  threads= 8 took 2 ms sorted? true
-Test 3 size = 31  threads= 8 took 2 ms sorted? true
- Mean:2.6666667 ms
-Test 1 size = 65535  threads= 1 took 47 ms sorted? true
-Test 2 size = 65535  threads= 1 took 23 ms sorted? true
-Test 3 size = 65535  threads= 1 took 18 ms sorted? true
- Mean:29.333334 ms
-Test 1 size = 65535  threads= 2 took 22796 ms sorted? true
-Test 2 size = 65535  threads= 2 took 21889 ms sorted? true
-Test 3 size = 65535  threads= 2 took 22717 ms sorted? true
- Mean:22467.334 ms
-Test 1 size = 65535  threads= 4 took 23559 ms sorted? true
-Test 2 size = 65535  threads= 4 took 22469 ms sorted? true
-Test 3 size = 65535  threads= 4 took 25667 ms sorted? true
- Mean:23898.334 ms
-Test 1 size = 65535  threads= 8 took 25361 ms sorted? true
-Test 2 size = 65535  threads= 8 took 26424 ms sorted? true
-Test 3 size = 65535  threads= 8 took 23507 ms sorted? true
- Mean:25097.334 ms
-Test 1 size = 65537  threads= 1 took 8 ms sorted? true
-Test 2 size = 65537  threads= 1 took 12 ms sorted? true
-Test 3 size = 65537  threads= 1 took 15 ms sorted? true
- Mean:11.666667 ms
+Test 1 size = 2096  threads= 64 took 5 ms sorted? true
+Test 2 size = 2096  threads= 64 took 7 ms sorted? true
+Test 3 size = 2096  threads= 64 took 5 ms sorted? true
+ Mean:5.6666665 ms
+Test 1 size = 2096  threads= 256 took 16 ms sorted? true
+Test 2 size = 2096  threads= 256 took 20 ms sorted? true
+Test 3 size = 2096  threads= 256 took 20 ms sorted? true
+ Mean:18.666666 ms
+Test 1 size = 2096  threads= 1024 took 61 ms sorted? true
+Test 2 size = 2096  threads= 1024 took 98 ms sorted? true
+Test 3 size = 2096  threads= 1024 took 84 ms sorted? true
+ Mean:81.0 ms
+Test 1 size = 7096  threads= 1 took 0 ms sorted? true
+Test 2 size = 7096  threads= 1 took 17 ms sorted? true
+Test 3 size = 7096  threads= 1 took 0 ms sorted? true
+ Mean:5.6666665 ms
+Test 1 size = 7096  threads= 2 took 15 ms sorted? true
+Test 2 size = 7096  threads= 2 took 0 ms sorted? true
+Test 3 size = 7096  threads= 2 took 8 ms sorted? true
+ Mean:7.6666665 ms
+Test 1 size = 7096  threads= 4 took 3 ms sorted? true
+Test 2 size = 7096  threads= 4 took 3 ms sorted? true
+Test 3 size = 7096  threads= 4 took 3 ms sorted? true
+ Mean:3.0 ms
+Test 1 size = 7096  threads= 16 took 5 ms sorted? true
+Test 2 size = 7096  threads= 16 took 3 ms sorted? true
+Test 3 size = 7096  threads= 16 took 4 ms sorted? true
+ Mean:4.0 ms
+Test 1 size = 7096  threads= 64 took 6 ms sorted? true
+Test 2 size = 7096  threads= 64 took 7 ms sorted? true
+Test 3 size = 7096  threads= 64 took 8 ms sorted? true
+ Mean:7.0 ms
+Test 1 size = 7096  threads= 256 took 15 ms sorted? true
+Test 2 size = 7096  threads= 256 took 22 ms sorted? true
+Test 3 size = 7096  threads= 256 took 22 ms sorted? true
+ Mean:19.666666 ms
+Test 1 size = 7096  threads= 1024 took 61 ms sorted? true
+Test 2 size = 7096  threads= 1024 took 113 ms sorted? true
+Test 3 size = 7096  threads= 1024 took 88 ms sorted? true
+ Mean:87.333336 ms
+Test 1 size = 65535  threads= 1 took 53 ms sorted? true
+Test 2 size = 65535  threads= 1 took 41 ms sorted? true
+Test 3 size = 65535  threads= 1 took 40 ms sorted? true
+ Mean:44.666668 ms
+Test 1 size = 65535  threads= 2 took 23 ms sorted? true
+Test 2 size = 65535  threads= 2 took 25 ms sorted? true
+Test 3 size = 65535  threads= 2 took 16 ms sorted? true
+ Mean:21.333334 ms
+Test 1 size = 65535  threads= 4 took 35 ms sorted? true
+Test 2 size = 65535  threads= 4 took 25 ms sorted? true
+Test 3 size = 65535  threads= 4 took 26 ms sorted? true
+ Mean:28.666666 ms
+Test 1 size = 65535  threads= 16 took 24 ms sorted? true
+Test 2 size = 65535  threads= 16 took 24 ms sorted? true
+Test 3 size = 65535  threads= 16 took 25 ms sorted? true
+ Mean:24.333334 ms
+Test 1 size = 65535  threads= 64 took 27 ms sorted? true
+Test 2 size = 65535  threads= 64 took 28 ms sorted? true
+Test 3 size = 65535  threads= 64 took 28 ms sorted? true
+ Mean:27.666666 ms
+Test 1 size = 65535  threads= 256 took 39 ms sorted? true
+Test 2 size = 65535  threads= 256 took 39 ms sorted? true
+Test 3 size = 65535  threads= 256 took 41 ms sorted? true
+ Mean:39.666668 ms
+Test 1 size = 65535  threads= 1024 took 83 ms sorted? true
+Test 2 size = 65535  threads= 1024 took 107 ms sorted? true
+Test 3 size = 65535  threads= 1024 took 139 ms sorted? true
+ Mean:109.666664 ms
+Test 1 size = 65537  threads= 1 took 65 ms sorted? true
+Test 2 size = 65537  threads= 1 took 37 ms sorted? true
+Test 3 size = 65537  threads= 1 took 48 ms sorted? true
+ Mean:50.0 ms
+Test 1 size = 65537  threads= 2 took 21 ms sorted? true
+Test 2 size = 65537  threads= 2 took 15 ms sorted? true
+Test 3 size = 65537  threads= 2 took 32 ms sorted? true
+ Mean:22.666666 ms
+Test 1 size = 65537  threads= 4 took 29 ms sorted? true
+Test 2 size = 65537  threads= 4 took 24 ms sorted? true
+Test 3 size = 65537  threads= 4 took 24 ms sorted? true
+ Mean:25.666666 ms
+Test 1 size = 65537  threads= 16 took 25 ms sorted? true
+Test 2 size = 65537  threads= 16 took 25 ms sorted? true
+Test 3 size = 65537  threads= 16 took 26 ms sorted? true
+ Mean:25.333334 ms
+Test 1 size = 65537  threads= 64 took 26 ms sorted? true
+Test 2 size = 65537  threads= 64 took 28 ms sorted? true
+Test 3 size = 65537  threads= 64 took 28 ms sorted? true
+ Mean:27.333334 ms
+Test 1 size = 65537  threads= 256 took 37 ms sorted? true
+Test 2 size = 65537  threads= 256 took 81 ms sorted? true
+Test 3 size = 65537  threads= 256 took 43 ms sorted? true
+ Mean:53.666668 ms
+Test 1 size = 65537  threads= 1024 took 84 ms sorted? true
+Test 2 size = 65537  threads= 1024 took 104 ms sorted? true
+Test 3 size = 65537  threads= 1024 took 111 ms sorted? true
+ Mean:99.666664 ms
+Test 1 size = 131073  threads= 1 took 85 ms sorted? true
+Test 2 size = 131073  threads= 1 took 72 ms sorted? true
+Test 3 size = 131073  threads= 1 took 78 ms sorted? true
+ Mean:78.333336 ms
+Test 1 size = 131073  threads= 2 took 54 ms sorted? true
+Test 2 size = 131073  threads= 2 took 51 ms sorted? true
+Test 3 size = 131073  threads= 2 took 51 ms sorted? true
+ Mean:52.0 ms
+Test 1 size = 131073  threads= 4 took 51 ms sorted? true
+Test 2 size = 131073  threads= 4 took 51 ms sorted? true
+Test 3 size = 131073  threads= 4 took 51 ms sorted? true
+ Mean:51.0 ms
+Test 1 size = 131073  threads= 16 took 50 ms sorted? true
+Test 2 size = 131073  threads= 16 took 52 ms sorted? true
+Test 3 size = 131073  threads= 16 took 49 ms sorted? true
+ Mean:50.333332 ms
+Test 1 size = 131073  threads= 64 took 55 ms sorted? true
+Test 2 size = 131073  threads= 64 took 53 ms sorted? true
+Test 3 size = 131073  threads= 64 took 55 ms sorted? true
+ Mean:54.333332 ms
+Test 1 size = 131073  threads= 256 took 64 ms sorted? true
+Test 2 size = 131073  threads= 256 took 66 ms sorted? true
+Test 3 size = 131073  threads= 256 took 67 ms sorted? true
+ Mean:65.666664 ms
+Test 1 size = 131073  threads= 1024 took 108 ms sorted? true
+Test 2 size = 131073  threads= 1024 took 127 ms sorted? true
+Test 3 size = 131073  threads= 1024 took 131 ms sorted? true
+ Mean:122.0 ms
+Test 1 size = 8388608  threads= 1 took 10071 ms sorted? true
+Test 2 size = 8388608  threads= 1 took 10753 ms sorted? true
+Test 3 size = 8388608  threads= 1 took 10473 ms sorted? true
+ Mean:10432.333 ms
+Test 1 size = 8388608  threads= 2 took 5193 ms sorted? true
+Test 2 size = 8388608  threads= 2 took 5460 ms sorted? true
+Test 3 size = 8388608  threads= 2 took 5158 ms sorted? true
+ Mean:5270.3335 ms
+Test 1 size = 8388608  threads= 4 took 5299 ms sorted? true
+Test 2 size = 8388608  threads= 4 took 5458 ms sorted? true
+Test 3 size = 8388608  threads= 4 took 5650 ms sorted? true
+ Mean:5469.0 ms
+Test 1 size = 8388608  threads= 16 took 5383 ms sorted? true
+Test 2 size = 8388608  threads= 16 took 5013 ms sorted? true
+Test 3 size = 8388608  threads= 16 took 5514 ms sorted? true
+ Mean:5303.3335 ms
+Test 1 size = 8388608  threads= 64 took 5200 ms sorted? true
+Test 2 size = 8388608  threads= 64 took 5182 ms sorted? true
+Test 3 size = 8388608  threads= 64 took 9733 ms sorted? true
+ Mean:6705.0 ms
+Test 1 size = 8388608  threads= 256 took 5343 ms sorted? true
+Test 2 size = 8388608  threads= 256 took 5246 ms sorted? true
+Test 3 size = 8388608  threads= 256 took 4834 ms sorted? true
+ Mean:5141.0 ms
+Test 1 size = 8388608  threads= 1024 took 5249 ms sorted? true
+Test 2 size = 8388608  threads= 1024 took 5316 ms sorted? true
+Test 3 size = 8388608  threads= 1024 took 5199 ms sorted? true
+ Mean:5254.6665 ms
