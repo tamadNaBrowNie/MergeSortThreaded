@@ -51,7 +51,7 @@ public class Main {
         // Test area
         scanner.close();
         int siz;
-        for (int h = 1; h < 3; h++) {
+        for (int h = 1; h < 6; h++) {
             writer.write("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
@@ -201,7 +201,7 @@ public class Main {
                 root.waitTask(root);
                 pool.shutdownNow();
             } else {
-                boolean hack = true;
+                boolean hack = false;
                 // if we want to be honest
                 if (hack)
                     generate_intervals(0, arr.length - 1).forEach(t -> pool.submit(new Runnable() {
@@ -303,33 +303,24 @@ public class Main {
         return (start < end ? start + end * end : start * start + start + end);
     }
 
-    private static List<Callable<Task>> mapTree(List<Task> tasks, ExecutorService pool) {
+    private static void mapTree(List<Task> tasks, ExecutorService pool) {
 
         HashMap<Task, Task> task_map = new HashMap<Task, Task>();
         // tasks.forEach(task -> System.out.println(task));
         Task l_child, r_child;
 
-        for (Task t : tasks) {
+        for (Task t : tasks)
             // WHY IS THIS LOOP SO SLOW?
             // A:Collisions and best case is the same speed as merging on the java thread
             //
             task_map.put(t, t);
-            // System.out.println(System.currentTimeMillis() - startTime);
-        }
-        // System.out.println(System.currentTimeMillis() -
-        // startTime);tem.currentTimeMillis() - startTime);
+        // System.out.println(System.currentTimeMillis() - startTime);
 
         for (Task task : tasks.stream().filter(task -> !task.isBase()).toList()) {
-            // System.out.println(i);
-
-            // if (task.isBase()) {
-            // // System.out.println("Based\n");
-            // continue;
-
-            // }
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-            // THANK FUCK FOR HASHMAPS
             l_child = task_map.get(new Task(new Interval(task.getStart(), m)));
+            r_child = task_map.get(new Task(new Interval(m + 1, task.getEnd())));
+            task.setChildren(r_child, l_child);
             // tasks.stream()
             // .filter(
             // t -> t.getStart() == task.getStart()
@@ -337,20 +328,13 @@ public class Main {
             // t.getEnd() == m)
             // .findFirst()
             // .orElse(null),
-            r_child = task_map.get(new Task(new Interval(m + 1, task.getEnd())));
-
-            task.setChildren(r_child, l_child);
 
         }
-        return null;
 
     }
 
     private static void getTree(List<Task> tasks, ExecutorService pool) {
-        // Collections.reverse(tasks);
         int left = 1, right = 2;
-        // Task l_child, r_child;
-        // List<Callable<Task>> tree = new ArrayList<Callable<Task>>();
         for (Task t : tasks) {
 
             if (!t.isBase()) {
@@ -367,8 +351,6 @@ public class Main {
             left += 2;
             right += 2;
         }
-        // Collections.reverse(tasks);
-        // return tree;
     }
 
     /*
