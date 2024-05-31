@@ -141,7 +141,7 @@ public class Main {
                     ? threaded(arr, generate_intervals(0, arr.length - 1))
                     : threaded(arr);
             Task root = tasks.get(tasks.size() - 1);
-            System.out.println(System.currentTimeMillis() - start + " n = " + arr.length);
+            System.out.println(System.currentTimeMillis() - start + " n = " + arr.length + " threads = " + threads);
             // System.out.println(System.currentTimeMillis() -
             // startTime);tem.currentTimeMillis() - startTime);
             // it is a pain to parallelize and when i did, it somehow got 5x slower
@@ -160,7 +160,12 @@ public class Main {
             synchronized (root) {
                 root.waitTask(root);
             }
+            //
+            start = System.currentTimeMillis();
             pool.shutdown();
+            System.out.print("Shutdown ");
+            System.out.println(
+                    System.currentTimeMillis() - start + " n = " + arr.length + " threads = " + threads);
             // wait for pool to dry.
             // yes its a spinlock. a lot of waits in java are impatient.
             // stability and speed are enemies apparently
