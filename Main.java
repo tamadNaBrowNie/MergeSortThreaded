@@ -174,7 +174,8 @@ public class Main {
             // Using Executor service basically makes this push based.
 
             // new Task(new Interval(0, arr.length - 1), arr, tasks);
-            BufferedWriter writer = new BufferedWriter(new FileWriter("exec.txt", true), 8192 << 2);
+            // BufferedWriter writer = new BufferedWriter(new FileWriter("exec.txt", true),
+            // 8192 << 2);
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
 
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
@@ -188,14 +189,15 @@ public class Main {
                         // :
                         generateTasks(0, arr.length - 1, arr);
                 Task root = tasks.get(tasks.size() - 1);
-                writer.write("Dep check ");
-                writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + " threads = " + threads);
+                // writer.write("Dep check ");
+                // writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + "
+                // threads = " + threads);
                 start = System.currentTimeMillis();
                 tasks.removeIf(task -> task.isBase());
                 tasks.forEach(t -> pool.execute(t));
-                writer.write(" Exec ");
+                // writer.write(" Exec ");
 
-                writer.write(System.currentTimeMillis() - start + " ms");
+                // writer.write(System.currentTimeMillis() - start + " ms");
                 root.waitTask(root);
                 pool.shutdownNow();
             } else {
@@ -257,15 +259,13 @@ public class Main {
             // root.waitTask(root);
             // }
             //
-            writer.write('\n');
+            // writer.write('\n');
 
-            writer.flush();
-            writer.close();
+            // writer.flush();
+            // writer.close();
 
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
