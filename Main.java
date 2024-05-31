@@ -2,93 +2,76 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
-
-import java.util.function.Consumer;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        // TODO: Seed your randomizer
-        Random rand = new Random(1);
-        // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
-
-                data = { 8, 27, 24, 31, 16380, (1 << 16) - 1, (1 << 16) + 1, (1 << 23), (1 << 23) - 1 };
-
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Test mode? 0 is no else yes");
-        long startTime = 0, elapsedTime = 0;
-        if (0 == scanner.nextInt()) {
-            demo(rand, scanner);
-            scanner.close();
+        System.out.print("Test mode? 0 is no, else yes: ");
+        if (scanner.nextInt() == 0) {
+            demo();
             return;
         }
+
         System.out.println("Write where:");
-        scanner.nextLine();
+        scanner.nextLine(); // consume newline
         String locale = scanner.nextLine();
         BufferedWriter writer = new BufferedWriter(new FileWriter(locale), 131072);
-        // Test area
-        scanner.close();
-        int siz;
-        for (int h = 1; h < 6; h++) {
+        int[] cores = {0, 2, 4, 6, 8, 10};
+        int[] data = {8, 27, 24, 31, 16380, (1 << 16) - 1, (1 << 23)};
+
+        for (int h = 1; h <= 2; h++) {
             writer.write("\n\nrun" + h);
             for (int dat : data) {
                 for (int core : cores) {
-                    siz = 1 << core;
+                    int siz = 1 << core;
                     Long avg = 0L;
-                    for (int k = 1; k < 4; k++) {
-                        startTime = System.currentTimeMillis();
+                    for (int k = 1; k <= 3; k++) {
+                        long startTime = System.currentTimeMillis();
                         int[] arr = new int[dat];
-                        doTasks(siz, rand, arr);
-                        elapsedTime = System.currentTimeMillis() - startTime;
+                        doTasks(siz, arr);
+                        long elapsedTime = System.currentTimeMillis() - startTime;
                         avg += elapsedTime;
-                        String msg = String.format("\nTest %d size = %d  threads= %d took %d ms sorted? %b",
+                        String msg = String.format("\nTest %d size = %d  threads = %d took %d ms sorted? %b",
                                 k, dat, siz, elapsedTime, isSorted(arr));
                         writer.write(msg);
-                        // System.out.println(msg);
                     }
-                    writer.write("\n Mean:" + (float) avg / 3 + " ms");
-                    writer.flush();
+                    writer.write("\nMean: " + (float) avg / 3 + " ms");
                 }
-
             }
         }
+
         writer.flush();
         writer.close();
+        scanner.close();
     }
 
-    private static void demo(Random rand, Scanner scanner) {
-        long startTime;
-        long elapsedTime;
-        System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
-
-        int n = scanner.nextInt(), p = scanner.nextInt();
+    private static void demo() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter array size N and # of threads (exponent of 2): ");
+        int n = scanner.nextInt();
+        int p = 1 << scanner.nextInt();
 
         while (n < 2 || n > 1 << 23 || p < 0 || p > 10) {
             System.out.println("Bad input, try again");
-            System.out.print("Enter array size N and # of threads (its an exponent raising 2): ");
+            System.out.print("Enter array size N and # of threads (exponent of 2): ");
             n = scanner.nextInt();
             p = 1 << scanner.nextInt();
         }
 
-        startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         int[] arr = new int[n];
-        doTasks(p, rand, arr);
+        doTasks(p, arr);
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.printf("Took %d ms. Array sorted? %b\n", elapsedTime, isSorted(arr));
 
-        elapsedTime = System.currentTimeMillis() - startTime;
-        System.out.printf(" took %d ms array sorted? %b\n", elapsedTime, isSorted(arr));
+        scanner.close();
     }
 
     private static boolean isSorted(int[] arr) {
-        // for (int i : arr) {
-        // System.out.println(i);
-        // }
         for (int i = 0; i < arr.length - 1; i++) {
             if (arr[i] > arr[i + 1])
                 return false;
@@ -96,260 +79,47 @@ public class Main {
         return true;
     }
 
-    private static void doTasks(int threads, Random rand, int[] arr) {
-
-        // System.out.println("Array done");
-
-        for (int i = 0; i < arr.length; i++)
-            arr[i] = i + 1;
-        for (int i = arr.length - 1; i > 0; i--) {
-            // from https://stackoverflow.com/a/1520212
-            int index = rand.nextInt(i + 1);
-            // Simple swap
-            int a = arr[index];
-            arr[index] = arr[i];
-            arr[i] = a;
-        }
-
-        // System.out.println("Array shuffed");
-        // List<Interval> intervals = generate_intervals(0, arr.length - 1);
-        if (threads == 1) {
-            generate_intervals(0, arr.length - 1).forEach((c) -> merge(arr, c.getStart(), c.getEnd()));
-            return;
-        }
-        // uses generated intervals if n is power of 2 because you can easily rebuild
-        // the splitting "tree"
-        // performance is comparable to recursive version though
-        // same case for n <32768
-        // reason why we reimplemented the old reursive code was its speed and stability
-        // for too large n that are none powers of 2
-        // adding tings to hashmap takes too long because the hash function cannot
-        // handle n > 323767
+    private static void doTasks(int threads, int[] arr) {
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        List<Task> tasks = generateTasks(0, arr.length - 1, arr);
 
         try {
-            // Slow? yes. Stupid? its not stupid if it works.
-            // Using Executor service basically makes this pull based.
-
-            // new Task(new Interval(0, arr.length - 1), arr, tasks);
-            ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
-
-            ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
-            long start = System.currentTimeMillis();
-            List<Task> tasks = (arr.length & -arr.length) == arr.length || arr.length < 32768
-                    // using the generated intervals is gucci for powers of 2
-                    // can someone pls parallelize tis
-                    ? threaded(arr, generate_intervals(0, arr.length - 1))
-                    : threaded(arr);
-            Task root = tasks.get(tasks.size() - 1);
-            System.out.println(System.currentTimeMillis() - start + " n = " + arr.length + " threads = " + threads);
-            // System.out.println(System.currentTimeMillis() -
-            // startTime);tem.currentTimeMillis() - startTime);
-            // it is a pain to parallelize and when i did, it somehow got 5x slower
-            // tldr; overhead for getting the dependency takes almost the same amount of
-            // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
-            // probably distribute it myself but too late)
-            // This is more true for non powers of 2 ergo adding the old recursive code
-
-            // This spins my head right round...
-
-            // while (tasks.stream().anyMatch(task -> task.isDone() == false))
-
-            tasks.stream()
-                    .filter(task -> !task.isDone()).forEach(task -> pool.submit(task));
-
-            synchronized (root) {
-                root.waitTask(root);
-            }
-            //
-            start = System.currentTimeMillis();
-            pool.shutdown();
-            System.out.print("Shutdown ");
-            System.out.println(
-                    System.currentTimeMillis() - start + " n = " + arr.length + " threads = " + threads);
-            // wait for pool to dry.
-            // yes its a spinlock. a lot of waits in java are impatient.
-            // stability and speed are enemies apparently
-            // learned this trick from 'ere: https://stackoverflow.com/a/1250655
-            // they mentioned that malarkey happens if its not a spin lock
-            // i have experienced that malarkey both in primes and here
-            // this is also why a lot of examples of notify and wait in java use while loops
-            // its too prevent the thread from getting impatient whether
-            // 1. it took too long
-            // 2. something went wrong (spurious wake up
-            // http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-            // while (!pool.awaitTermination(1000, TimeUnit.NANOSECONDS))
-            ;
-
+            pool.invokeAll(tasks);
         } catch (InterruptedException e) {
-            System.err.println("Exec interrupted");
+            e.printStackTrace();
         }
 
-    }
-
-    private static ArrayList<Task> threaded(int[] arr) {
-        ArrayList<Task> tasks = new ArrayList<Task>();
-        new Task(new Interval(0, arr.length - 1), arr, tasks);
-        return tasks;
-    }
-
-    private static List<Task> threaded(int[] arr, List<Interval> intervals) {
-        List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
-        // the line below takes 1 second at 2^23
-        Collections.reverse(intervals);
-        intervals.forEach(i -> tasks.add(new Task(i, arr)));
-        Consumer<List<Task>> func = ((arr.length & -arr.length) == arr.length) ? Main::getTree : Main::mapTree;
-        // the line below also takes 1 second at 2^23
-        func.accept(tasks);
-        Collections.reverse(tasks);
-        return tasks;
-    }
-
-    public static int key(int start, int end) {
-        // from https://stackoverflow.com/a/13871379
-        // also known as Szudzik's pairing function. starts colliding after n = (2^15)-1
-        // hence the slow down around >2^15
-        return (start < end ? start + end * end : start * start + start + end);
-    }
-
-    private static void mapTree(List<Task> tasks) {
-
-        HashMap<Task, Task> task_map = new HashMap<Task, Task>();
-        // tasks.forEach(task -> System.out.println(task));
-        Task l_child, r_child;
-
-        for (Task t : tasks) {
-            // WHY IS THIS LOOP SO SLOW?
-            // A:Collisions
-            task_map.put(t, t);
-            // System.out.println(System.currentTimeMillis() - startTime);
+        pool.shutdown();
+        while (!pool.isTerminated()) {
+            // Wait for all tasks to finish
         }
-        // System.out.println(System.currentTimeMillis() -
-        // startTime);tem.currentTimeMillis() - startTime);
-
-        for (Task task : tasks.stream().filter(task -> !task.isBase()).toList()) {
-            // System.out.println(i);
-
-            // if (task.isBase()) {
-            // // System.out.println("Based\n");
-            // continue;
-
-            // }
-            final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
-            // THANK FUCK FOR HASHMAPS
-            l_child = task_map.get(new Task(new Interval(task.getStart(), m)));
-            // tasks.stream()
-            // .filter(
-            // t -> t.getStart() == task.getStart()
-            // &&
-            // t.getEnd() == m)
-            // .findFirst()
-            // .orElse(null),
-            r_child = task_map.get(new Task(new Interval(m + 1, task.getEnd())));
-
-            task.setChildren(r_child, l_child);
-
-        }
-
     }
 
-    private static void getTree(List<Task> tasks) {
-        // Collections.reverse(tasks);
-        int left = 1, right = 2;
-        Task l_child, r_child;
-
-        for (Task t : tasks) {
-
-            if (!t.isBase()) {
-                l_child = tasks.get(left);
-                r_child = tasks.get(right);
-                t.setChildren(r_child, l_child);
-            }
-            left += 2;
-            right += 2;
-        }
-        // Collections.reverse(tasks);
-
-    }
-
-    /*
-     * This function generates all the intervals for merge sort iteratively, given
-     * the range of indices to sort. Algorithm runs in O(n).
-     * 
-     * Parameters:
-     * start : int - start of range
-     * end : int - end of range (inclusive)
-     * 
-     * Returns a list of Interval objects indicating the ranges for merge sort.
-     */
-    public static List<Interval> generate_intervals(int start, int end) {
-        List<Interval> frontier = new ArrayList<>();
-        frontier.add(new Interval(start, end));
+    private static List<Task> generateTasks(int start, int end, int[] arr) {
+        List<Task> tasks = new ArrayList<>();
+        Task head = new Task(new Interval(start, end), arr);
+        tasks.add(head);
 
         int i = 0;
-        while (i < frontier.size()) {
-            int s = frontier.get(i).getStart();
-            int e = frontier.get(i).getEnd();
-
+        while (i < tasks.size()) {
+            head = tasks.get(i);
+            int s = head.getStart();
+            int e = head.getEnd();
             i++;
 
-            // if base case
             if (s == e) {
                 continue;
             }
 
-            // compute midpoint
-            int m = s + (e - s) / 2;
-
-            // add prerequisite intervals
-            frontier.add(new Interval(m + 1, e));
-            frontier.add(new Interval(s, m));
+            int m = s + ((e - s) >> 1);
+            Task left = new Task(new Interval(s, m), arr);
+            Task right = new Task(new Interval(m + 1, e), arr);
+            head.setChildren(left, right);
+            tasks.add(left);
+            tasks.add(right);
         }
 
-        List<Interval> retval = new ArrayList<>();
-        for (i = frontier.size() - 1; i >= 0; i--) {
-            retval.add(frontier.get(i));
-        }
-
-        return retval;
-    }
-
-    /*
-     * This function performs the merge operation of merge sort.
-     * 
-     * Parameters:
-     * array : vector<int> - array to sort
-     * s : int - start index of merge
-     * e : int - end index (inclusive) of merge
-     */
-    public static void merge(int[] array, int s, int e) {
-        int m = s + (e - s) / 2;
-        int[] left = new int[m - s + 1];
-        int[] right = new int[e - m];
-        int l_ptr = 0, r_ptr = 0;
-        for (int i = s; i <= e; i++) {
-            if (i <= m) {
-                left[l_ptr++] = array[i];
-            } else {
-                right[r_ptr++] = array[i];
-            }
-        }
-        l_ptr = r_ptr = 0;
-
-        for (int i = s; i <= e; i++) {
-            // no more elements on left half
-            if (l_ptr == m - s + 1) {
-                array[i] = right[r_ptr];
-                r_ptr++;
-
-                // no more elements on right half or left element comes first
-            } else if (r_ptr == e - m || left[l_ptr] <= right[r_ptr]) {
-                array[i] = left[l_ptr];
-                l_ptr++;
-            } else {
-                array[i] = right[r_ptr];
-                r_ptr++;
-            }
-        }
+        return tasks;
     }
 }
 
@@ -363,195 +133,74 @@ class Interval {
     }
 
     public int getStart() {
-        return this.start;
-    }
-
-    public void setStart(int start) {
-        this.start = start;
+        return start;
     }
 
     public int getEnd() {
-        return this.end;
-    }
-
-    public void setEnd(int end) {
-        this.end = end;
+        return end;
     }
 }
 
-// Prefer composition over inheritance.
-class Task implements Callable<Interval> {
+class Task implements Callable<Void> {
     private Interval interval;
-    private boolean done = false;
     private int[] array;
-    private boolean base;
-    private Task l_child, r_child;
+    private Task leftChild;
+    private Task rightChild;
 
-    public Interval getInterval() {
-        return interval;
+    public Task(Interval interval, int[] array) {
+        this.interval = interval;
+        this.array = array;
     }
 
-    public Task getR_child() {
-        return r_child;
-    }
-
-    public Task getL_child() {
-        return l_child;
-    }
-
-    public boolean isBase() {
-        return base;
-    }
-
-    public boolean isDone() {
-        return done;
+    public void setChildren(Task leftChild, Task rightChild) {
+        this.leftChild = leftChild;
+        this.rightChild = rightChild;
     }
 
     public int getStart() {
-        return this.interval.getStart();
+        return interval.getStart();
     }
 
     public int getEnd() {
-        return this.interval.getEnd();
+        return interval.getEnd();
     }
 
-    public void waitTask(Task task) throws InterruptedException {
-        synchronized (task) {
-            while (!task.isDone()) {
-                task.wait(100);
+    @Override
+    public Void call() throws Exception {
+        if (leftChild == null || rightChild == null) {
+            merge(array, interval.getStart(), interval.getEnd());
+        } else {
+            leftChild.call();
+            rightChild.call();
+            merge(array, leftChild.getStart(),
+            rightChild.getEnd());
+        }
+        return null;
+    }
+
+    private static void merge(int[] array, int start, int end) {
+        int mid = (start + end) / 2;
+        int[] temp = new int[end - start + 1];
+        int i = start, j = mid + 1, k = 0;
+        
+        while (i <= mid && j <= end) {
+            if (array[i] <= array[j]) {
+                temp[k++] = array[i++];
+            } else {
+                temp[k++] = array[j++];
             }
         }
-    }
-
-    @Override
-    public Interval call() throws InterruptedException {
-        synchronized (this) {
-            if (done) {
-                this.notify();
-                return this.interval;
-            }
-            /*
-             * TODO: Something like this->
-             * while (!left.isDone || !right.isDone){
-             * left.wait();
-             * right.wait();
-             * }
-             * why spin lock? java threads wait for no one. they can wake up early by
-             * themselves
-             */
-            // if (!l_child.isDone() || !r_child.isDone()) {
-            // return interval;
-            // }
-            waitTask(l_child);
-            waitTask(r_child);
-            Main.merge(array, interval.getStart(), interval.getEnd());
-            done = true;
-            this.notify();
-            return this.interval;
+        
+        while (i <= mid) {
+            temp[k++] = array[i++];
         }
-    }
-
-    public void setChildren(Task l, Task r) {
-        this.l_child = l;
-        this.r_child = r;
-    }
-
-    // Prefer composition over inheritance
-    Task(Interval i, int[] arr) {
-        this.interval = i;
-        array = arr;
-        l_child = r_child = null;
-        base = done = interval.getEnd() == interval.getStart();
-    }
-
-    // Old Task implementation should reduce amount of traversals.
-    Task(Interval i, int[] arr, ArrayList<Task> tasks) {
-        this.interval = i;
-        array = arr;
-        base = done = interval.getEnd() == interval.getStart();
-        if (interval.getEnd() == interval.getStart())
-            l_child = r_child = null;
-        else {
-            int s = getStart(), e = getEnd(), m = s + (e - s) / 2;
-            l_child = new Task(new Interval(getStart(), m), arr, tasks);
-            r_child = new Task(new Interval(m + 1, getEnd()), arr, tasks);
-            // tasks.add(l_child);
-            // tasks.add(r_child);
+        
+        while (j <= end) {
+            temp[k++] = array[j++];
         }
-        tasks.add(this);
-        // System.out.println(tasks);
-
-    }
-
-    public Task(Interval interval) {
-        // TODO Auto-generated constructor stub
-        this.interval = interval;
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return String.format("%d %d", interval.getStart(), interval.getEnd());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj)
-                || (((Task) obj).getStart() == this.getStart()
-                        && ((Task) obj).getEnd() == this.getEnd());
-    }
-
-    @Override
-    public int hashCode() {
-        // TODO Auto-generated method stub
-        return Main.key(getStart(), getEnd());
-    }
-
-}
-// TODO: Reimplement?
-
-class TreeMaker implements Callable<Task> {
-    private int l, r;
-    Task t;
-    List<Task> tasks;
-
-    TreeMaker(Task t, int left, int right, List<Task> tasks) {
-        this.t = t;
-        this.l = left;
-        this.r = right;
-        this.tasks = tasks;
-    }
-
-    @Override
-    public Task call() throws Exception {
-        if (t.isBase())
-            return t;
-        t.setChildren(tasks.get(l), tasks.get(r));
-        return t;
-    }
-}/*
- */
-
-class MapFinder implements Callable<Task> {
-    private Task t;
-    private HashMap<Integer, Task> tasks;
-
-    public MapFinder(Task t, HashMap<Integer, Task> tasks) {
-        this.t = t;
-        this.tasks = tasks;
-    }
-
-    public Task call() {
-        // TODO Auto-generated method
-        if (t.isBase())
-            return t;
-        final int m = t.getStart() + ((t.getEnd() - t.getStart()) >> 1);
-        Task l_child = tasks.get(Main.key(t.getStart(), m)),
-                r_child = tasks.get(Main.key(m + 1, t.getEnd()));
-
-        // System.out.println(t + " " + l_child + " " + r_child);
-        t.setChildren(r_child, l_child);
-        return t;
+        
+        for (i = start, k = 0; i <= end; i++, k++) {
+            array[i] = temp[k];
+        }
     }
 }
