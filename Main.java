@@ -17,7 +17,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // TODO: Seed your randomizer
-        Random rand = new Random(1);
+        int SEED = 1;
+        Random rand = new Random(SEED);
         // TODO: Get array size and thread count from user'
         int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
@@ -172,100 +173,81 @@ public class Main {
             // Slow? yes. Why? finding dependencies is O(n log n) which is the same O(n) as
             // unthreaded
             // Using Executor service basically makes this push based.
-
-            // new Task(new Interval(0, arr.length - 1), arr, tasks);
-            // BufferedWriter writer = new BufferedWriter(new FileWriter("exec.txt", true),
-            // 8192 << 2);
             ThreadFactory ThreadFactory = Executors.defaultThreadFactory();
-
             ExecutorService pool = Executors.newFixedThreadPool(threads, ThreadFactory);
-            long start = System.currentTimeMillis();
             if (threads > 1) {
-                List<Task> tasks =
-                        // (arr.length & -arr.length) == arr.length || arr.length < 32768
-                        // // using the generated intervals is gucci for powers of 2
-                        // // can someone pls parallelize tis
-                        // ? threaded(arr, generate_intervals(0, arr.length - 1), pool)
-                        // :
-                        generateTasks(0, arr.length - 1, arr);
+                List<Task> tasks = generateTasks(0, arr.length - 1, arr);
                 Task root = tasks.get(tasks.size() - 1);
-                // writer.write("Dep check ");
-                // writer.write(System.currentTimeMillis() - start + " ms n = " + arr.length + "
-                // threads = " + threads);
-                start = System.currentTimeMillis();
                 tasks.removeIf(task -> task.isBase());
                 tasks.forEach(t -> pool.execute(t));
-                // writer.write(" Exec ");
-
-                // writer.write(System.currentTimeMillis() - start + " ms");
                 root.waitTask(root);
                 pool.shutdownNow();
             } else {
                 boolean hack = false;
-                // if we want to be honest
                 if (hack)
                     generate_intervals(0, arr.length - 1).forEach(t -> pool.submit(new Runnable() {
                         public void run() {
-                            // TODO Auto-generated method stub
                             merge(arr, t.getStart(), t.getEnd());
                         }
                     }));
                 else
-                    // this is way faster. my guess is its because we only loop once and there's no
-                    // task queuing overhead
                     generate_intervals(0, arr.length - 1).forEach(t -> merge(arr, t.getStart(), t.getEnd()));
-
                 pool.shutdown();
-                // wait for pool to dry.
-                // yes its a spinlock. a lot of waits in java are impatient.
-                // stability and speed are enemies apparently
-                // learned this trick from 'ere: https://stackoverflow.com/a/1250655
-                // they mentioned that malarkey happens if its not a spin lock
-                // i have experienced that malarkey both in primes and here
-                // this is also why a lot of examples of notify and wait in java use while loops
-                // its too prevent the thread from getting impatient whether
-                // 1. it took too long
-                // 2. something went wrong (spurious wake up)
-                // (http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
-                // Extra note: we do not know what tle is on different machines ergo spinlock
                 while (!pool.awaitTermination(0, TimeUnit.MILLISECONDS))
                     ;
-                // None spin lock will be:
-                // if(!pool.awaitTermination(TLE, TimeUnit.MILLISECONDS)){
-                // System.err("Pool TLE/Spurious wake up");}
-                // }
-                // it is a pain to parallelize and when i did, it somehow got 5x slower
-                // tldr; overhead for getting the dependency takes almost the same amount of
-                // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
-                // probably distribute it myself but too late)
-                // This is more true for non powers of 2 ergo adding the old recursive code
-
-                // This spins my head right round...
-
-                // while (tasks.stream().anyMatch(task -> task.isDone() == false))
-                // int[] gaps = IntStream.range(1, arr.length).toArray();
-                // for (int gap : gaps) {
-                // tasks.stream()
-                // .filter(task -> (task.getEnd() - task.getStart()) == gap)
-                // .forEach(task -> pool.submit(task));
-
-                // }
-                // Spin lock or not, traversal will always have O (n log n)
-
-                // .stream()
-                // .filter(task -> !task.isDone())
-                // .forEach(task -> pool.submit(task));
-
-                // synchronized (root) {
-                // while (!root.isDone())
-                // root.waitTask(root);
-                // }
-                //
-                // writer.write('\n');
-
-                // writer.flush();
-                // writer.close();
             }
+
+            // this is way faster. my guess is its because we only loop once and there's no
+            // task queuing overhead
+            // wait for pool to dry.
+            // yes its a spinlock. a lot of waits in java are impatient.
+            // stability and speed are enemies apparently
+            // learned this trick from 'ere: https://stackoverflow.com/a/1250655
+            // they mentioned that malarkey happens if its not a spin lock
+            // i have experienced that malarkey both in primes and here
+            // this is also why a lot of examples of notify and wait in java use while loops
+            // its too prevent the thread from getting impatient whether
+            // 1. it took too long
+            // 2. something went wrong (spurious wake up)
+            // (http://opensourceforgeeks.blogspot.com/2014/08/spurious-wakeups-in-java-and-how-to.html)
+            // Extra note: we do not know what tle is on different machines ergo spinlock
+
+            // None spin lock will be:
+            // if(!pool.awaitTermination(TLE, TimeUnit.MILLISECONDS)){
+            // System.err("Pool TLE/Spurious wake up");}
+            // }
+            // it is a pain to parallelize and when i did, it somehow got 5x slower
+            // tldr; overhead for getting the dependency takes almost the same amount of
+            // time as unthreaded mergesort. paralellizing the task is slow(much smarter to
+            // probably distribute it myself but too late)
+            // This is more true for non powers of 2 ergo adding the old recursive code
+
+            // This spins my head right round...
+
+            // while (tasks.stream().anyMatch(task -> task.isDone() == false))
+            // int[] gaps = IntStream.range(1, arr.length).toArray();
+            // for (int gap : gaps) {
+            // tasks.stream()
+            // .filter(task -> (task.getEnd() - task.getStart()) == gap)
+            // .forEach(task -> pool.submit(task));
+
+            // }
+            // Spin lock or not, traversal will always have O (n log n)
+
+            // .stream()
+            // .filter(task -> !task.isDone())
+            // .forEach(task -> pool.submit(task));
+
+            // synchronized (root) {
+            // while (!root.isDone())
+            // root.waitTask(root);
+            // }
+            //
+            // writer.write('\n');
+
+            // writer.flush();
+            // writer.close();
+
         } catch (InterruptedException e) {
             System.err.println("Exec interrupted");
         }
@@ -306,28 +288,18 @@ public class Main {
     private static void mapTree(List<Task> tasks, ExecutorService pool) {
 
         HashMap<Task, Task> task_map = new HashMap<Task, Task>();
-        // tasks.forEach(task -> System.out.println(task));
         Task l_child, r_child;
 
         for (Task t : tasks)
-            // WHY IS THIS LOOP SO SLOW?
-            // A:Collisions and best case is the same speed as merging on the java thread
-            //
             task_map.put(t, t);
-        // System.out.println(System.currentTimeMillis() - startTime);
+        // WHY IS THIS LOOP SO SLOW?
+        // A:Collisions and best case is the same speed as merging on the java thread
 
         for (Task task : tasks.stream().filter(task -> !task.isBase()).toList()) {
             final int m = task.getStart() + ((task.getEnd() - task.getStart()) >> 1);
             l_child = task_map.get(new Task(new Interval(task.getStart(), m)));
             r_child = task_map.get(new Task(new Interval(m + 1, task.getEnd())));
             task.setChildren(r_child, l_child);
-            // tasks.stream()
-            // .filter(
-            // t -> t.getStart() == task.getStart()
-            // &&
-            // t.getEnd() == m)
-            // .findFirst()
-            // .orElse(null),
 
         }
 
@@ -512,20 +484,7 @@ class Task implements Runnable {
             if (done) {
                 this.notify();
                 return;
-                // this.interval;
             }
-            /*
-             * TODO: Something like this->
-             * while (!left.isDone || !right.isDone){
-             * left.wait();
-             * right.wait();
-             * }
-             * why spin lock? java threads wait for no one. they can wake up early by
-             * themselves
-             */
-            // if (!l_child.isDone() || !r_child.isDone()) {
-            // return interval;
-            // }
             try {
                 waitTask(l_child);
                 waitTask(r_child);
@@ -564,11 +523,9 @@ class Task implements Runnable {
             int s = getStart(), e = getEnd(), m = s + (e - s) / 2;
             l_child = new Task(new Interval(getStart(), m), arr, tasks);
             r_child = new Task(new Interval(m + 1, getEnd()), arr, tasks);
-            // tasks.add(l_child);
-            // tasks.add(r_child);
+
         }
         tasks.add(this);
-        // System.out.println(tasks);
 
     }
 
