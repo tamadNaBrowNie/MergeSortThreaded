@@ -9,9 +9,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.IntStream;
+// import java.util.function.Consumer;
+// import java.util.function.Function;
+// import java.util.stream.IntStream;
 
 public class Main {
 
@@ -19,9 +19,9 @@ public class Main {
         // TODO: Seed your randomizer
         Random rand = new Random(1);
         // TODO: Get array size and thread count from user'
-        int[] cores = { 0, 1, 2, 4, 6, 8, 10 },
+        int[] cores = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 
-                data = { 1 << 14, (1 << 12) - 2000, (1 << 12) + 3000, (1 << 16) - 1, (1 << 16) + 1, (1 << 17) + 1,
+                data = { 8, 16, 2, 4, 1 << 14, (1 << 16) - 1, (1 << 16) + 1, (1 << 17) + 1,
                         1 << 23 };
 
         Scanner scanner = new Scanner(System.in);
@@ -69,7 +69,7 @@ public class Main {
                         // System.out.println(msg);
                     }
                     writer.write("\n Mean:" + (float) avg / 3 + " ms");
-                    writer.flush();
+                    // writer.flush();
                 }
 
             }
@@ -199,7 +199,7 @@ public class Main {
                 root.waitTask(root);
                 pool.shutdownNow();
             } else {
-                boolean hack = false;
+                boolean hack = true;
                 // if we want to be honest
                 if (hack)
                     generate_intervals(0, arr.length - 1).forEach(t -> pool.submit(new Runnable() {
